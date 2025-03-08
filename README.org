@@ -1,0 +1,45 @@
+* Why Nibelung?
+Nibelung Theme is a minimalist Emacs color scheme blending cool gray tones and subtle blue accents, reminiscent of the Nebelung cat's silky fur. Designed for developers who value clarity and focus during long coding sessions.
+#+begin_quote
+3 AM. Brain fog. Eye strain. One thing remains sharp: your goddamn readable code.
+#+end_quote
+* Who is it for?
+- Fans of Doom-flatwhite and doom-plain seeking a fresh minimalist twist
+- Developers working for hours: soft contrasts reduce eye strain
+- Nord and Gruvbox enthusiasts ready for a more "airy" alternative
+* Features
+- Comments become first-class citizens, not afterthoughts
+- Great package support
+  + Magit (10 %)
+  + Dired and Dired with git comments (90%)
+  + Company (70%)
+  + Doom Nano Modeline
+  + Modeline
+  + Matching
+  + Org Mode (90%)
+  + Rainbow delimiters
+* Installation
+#+begin_src emacs-lisp
+;; packages.el
+(straight-use-package
+ '(nibelung-theme :type git :host github :repo "veschin/nibelung-theme"))
+;; config.el or init.el
+(load-theme 'nibelung t)
+#+end_src
+* Screenshots
+[[images/c++.png]]
+[[images/clojure.png]]
+[[images/cursor.png]]
+[[images/edn.png]]
+[[images/elisp+theme.png]]
+[[images/elixir.png]]
+[[images/haskell.png]]
+[[images/java.png]]
+[[images/javascript.png]]
+[[images/json.png]]
+[[images/lua.png]]
+[[images/org-mode.png]]
+[[images/python.png]]
+[[images/typescript.png]]
+[[images/xml.png]]
+[[images/yaml.png]]
