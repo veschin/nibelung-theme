@@ -1,5 +1,24 @@
 ;;; nibelung-theme.el -*- lexical-binding: t; -*-
 
+;; #F8F9FA
+;; #E9ECEF
+;; #DEE2E6
+;; #CED4DA
+;; #ADB5BD
+;; #6C757D
+;; #495057
+;; #343A40
+;; #212529
+;; #000000
+
+;; #EDF2FB
+;; #E2EAFC
+;; #D7E3FC
+;; #CCDBFD
+;; #C1D3FE
+;; #B6CCFE
+;; #ABC4FF
+
 (deftheme nibelung "Minimalistic theme inspired by doom-plain and doom-flatwhite")
 (setq custom--inhibit-theme-enable nil)
 ;; (setq all-the-icons-color-icons nil)
@@ -27,24 +46,26 @@
        (fgwhite "#E9ECEF")
 
        ;; Faces
-       (constant `((t (:foreground ,grayone))))
-       (symbol `((t (:foreground ,graythree))))
-       (string* `((t (:background ,graytwo :foreground ,fgwhite))))
-       (function `((t (:background ,graylight :foreground ,fg))))
-       (variable `((t (:background ,lightone :foreground ,grayfour))))
-       (match `((t (:background ,bluefour :foreground ,fgwhite))))
-       (replace-match* `((t (:background ,graythree :foreground ,fgwhite))))
-       (replace-confirm `((t (:background ,grayone :foreground ,fgwhite))))
-       (header `((t (:background ,graytwo :foreground ,fgwhite))))
-       (header-not-extended `((t (:extend nil :background ,graytwo :foreground ,fgwhite))))
-       (modeline `((t (:background ,fg :foreground ,fgwhite))))
-       (modeline-white `((t (:foreground ,fg :background ,fgwhite))))
-       (modeline-indicator header)
-       (link `((t (:foreground ,fg :underline t))))
-       (text `((t (:foreground ,fg :weight normal :normal t))))
        (code-block `((t (:extend t :background "#E9ECEF"))))
        (code-block-header `((t (:extend t :background ,lighttwo :foreground ,fg))))
+       (constant `((t (:foreground ,grayone))))
+       (comment `((t (:extend t :background ,grayone :foreground ,fgwhite))))
+       (function `((t (:background ,graylight :foreground ,fg))))
+       (header `((t (:background ,graytwo :foreground ,fgwhite))))
+       (header-not-extended `((t (:extend nil :background ,graytwo :foreground ,fgwhite))))
+       (highlight `((t (:background ,graytwo :foreground ,fgwhite))))
+       (link `((t (:foreground ,fg :underline t))))
+       (match `((t (:background ,bluefour :foreground ,fgwhite))))
+       (modeline `((t (:background ,fg :foreground ,fgwhite))))
+       (modeline-indicator header)
+       (modeline-white `((t (:foreground ,fg :background ,fgwhite))))
        (optional `((t (:foreground ,graylight))))
+       (replace-confirm `((t (:background ,grayone :foreground ,fgwhite))))
+       (replace-match* `((t (:background ,graythree :foreground ,fgwhite))))
+       (string* `((t (:background ,graytwo :foreground ,fgwhite))))
+       (symbol `((t (:foreground ,graythree))))
+       (text `((t (:foreground ,fg :weight normal :normal t))))
+       (variable `((t (:background ,lightone :foreground ,grayfour))))
        ;; End palette
        )
 
@@ -52,7 +73,7 @@
    'nibelung
    `(default ((t (:background ,bg))))
    `(cursor ((t (:background ,fgwhite :foreground ,fgwhite))))
-   `(highlight ((t (:background ,graytwo :foreground ,fgwhite))))
+   `(highlight ,highlight)
    ;; Constant
    `(font-lock-builtin-face ,constant)
    `(font-lock-constant-face ,constant)
@@ -64,7 +85,7 @@
    `(font-lock-variable-name-face ,variable)
    ;; Comment
    `(font-lock-comment-delimiter-face ((t (:extend nil :foreground ,grayzero :background ,graytwo))))
-   `(font-lock-comment-face ((t (:extend t :background ,grayone :foreground ,fgwhite))))
+   `(font-lock-comment-face ,comment)
    `(font-lock-doc-face ((t (:background ,grayzero :foreground ,graylight :slant italic))))
    `(font-lock-warning-face ((t (:foreground ,fg))))
    ;; Misc
@@ -152,6 +173,32 @@
    `(rainbow-delimiters-depth-3-face ((t (:foreground ,grayfour))))
    `(rainbow-delimiters-depth-2-face ((t (:foreground ,bluefour))))
    `(rainbow-delimiters-depth-1-face ((t (:foreground ,grayone))))
+   ;; Magit
+   `(magit-tag ,header)
+   `(magit-section-highlight ((t (:background ,bg :foreground ,fg))))
+   `(magit-diff-context-highlight ((t (:foreground ,fg))))
+   `(magit-branch-local ,match)
+   `(magit-branch-remote ,header)
+   `(magit-section-heading ,code-block-header)
+   `(magit-branch-current ,match)
+   `(magit-hash ,optional)
+   `(magit-reflog-commit ,comment)
+   `(magit-diff-added ,replace-match*)
+   `(magit-diff-added-highlight ,replace-match*)
+   `(magit-diff-removed ,replace-confirm)
+   `(magit-diff-removed-highlight ,replace-confirm)
+   `(diff-refine-added ,match)
+   `(diff-refine-removed ,variable)
+   `(magit-diff-file-heading ,code-block-header)
+   `(magit-diffstat-added ,match)
+   `(magit-diffstat-removed ,variable)
+   `(magit-log-author ,optional)
+   ;; Transient
+   `(transient-key-stay ,text)
+   `(transient-key-exit ,constant)
+   `(transient-heading ,code-block-header)
+   `(transient-value ,match)
+   `(transient-argument ,match)
    ;;
    )
   )

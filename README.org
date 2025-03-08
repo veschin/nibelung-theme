@@ -10,13 +10,13 @@ Nibelung Theme is a minimalist Emacs color scheme blending cool gray tones and s
 * Features
 - Comments become first-class citizens, not afterthoughts
 - Great package support
-  + Magit (10 %)
-  + Dired and Dired with git comments (90%)
-  + Company (70%)
+  + Magit
+  + Dired and Dired with git comments
+  + Company
   + Doom Nano Modeline
   + Modeline
   + Matching
-  + Org Mode (90%)
+  + Org Mode
   + Rainbow delimiters
 * Installation
 #+begin_src emacs-lisp
@@ -30,6 +30,9 @@ Nibelung Theme is a minimalist Emacs color scheme blending cool gray tones and s
 ** Org mode
 [[images/org-mode.png]]
 [[images/cursor.png]]
+** Magit
+[[images/magit1.png]]
+[[images/magit2.png]]
 ** C++
 [[images/c++.png]]
 ** Clojure
