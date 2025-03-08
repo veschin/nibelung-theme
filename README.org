@@ -4,9 +4,9 @@ Nibelung Theme is a minimalist Emacs color scheme blending cool gray tones and s
 3 AM. Brain fog. Eye strain. One thing remains sharp: your goddamn readable code.
 #+end_quote
 * Who is it for?
-- Fans of Doom-flatwhite and doom-plain seeking a fresh minimalist twist
+- Fans of ~doom-flatwhite~ and ~doom-plain~ seeking a fresh minimalist twist
 - Developers working for hours: soft contrasts reduce eye strain
-- Nord and Gruvbox enthusiasts ready for a more "airy" alternative
+- ~Nord~ and ~gruvbox~ enthusiasts ready for a more "airy" alternative
 * Features
 - Comments become first-class citizens, not afterthoughts
 - Great package support
