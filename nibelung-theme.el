@@ -19,8 +19,8 @@
 ;; #B6CCFE
 ;; #ABC4FF
 
-(deftheme nibelung "Minimalistic theme inspired by doom-plain and doom-flatwhite")
-(setq custom--inhibit-theme-enable nil)
+(deftheme nibelung-theme "Minimalistic theme inspired by doom-plain and doom-flatwhite")
+;; (setq custom--inhibit-theme-enable nil)
 ;; (setq all-the-icons-color-icons nil)
 ;; (setq nerd-icons-color-icons nil)
 (let* (;; Color palette
@@ -70,7 +70,7 @@
        )
 
   (custom-theme-set-faces
-   'nibelung
+   'nibelung-theme
    `(default ((t (:background ,bg))))
    `(cursor ((t (:background ,fgwhite :foreground ,fgwhite))))
    `(highlight ,highlight)
@@ -202,5 +202,9 @@
    ;;
    )
   )
+;;;###autoload
+(when (and (boundp 'custom-theme-load-path) load-file-name)
+  (add-to-list 'custom-theme-load-path
+    (file-name-as-directory (file-name-directory load-file-name))))
 
-(provide-theme 'nibelung)
+(provide-theme 'nibelung-theme)
