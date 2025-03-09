@@ -19,13 +19,24 @@ Nibelung Theme is a minimalist Emacs color scheme blending cool gray tones and s
   + Org Mode
   + Rainbow delimiters
 * Installation
+Emacs
 #+begin_src emacs-lisp
-;; packages.el
+;; init.el
 (straight-use-package
  '(nibelung-theme :type git :host github :repo "veschin/nibelung-theme"))
-;; config.el or init.el
 (load-theme 'nibelung t)
 #+end_src
+Doom Emacs
+#+begin_src emacs-lisp
+;; packages.el
+(package! nibelung-theme
+  :recipe (:host github
+           :repo "veschin/nibelung-theme"))
+;; config.el
+(setq doom-theme 'nibelung)
+#+end_src
+** Warning
+U should disable any other theme
 * Screenshots
 ** Org mode
 [[images/org-mode.png]]
