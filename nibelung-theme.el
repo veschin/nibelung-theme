@@ -19,7 +19,7 @@
 ;; #B6CCFE
 ;; #ABC4FF
 
-(deftheme nibelung-theme "Minimalistic theme inspired by doom-plain and doom-flatwhite")
+(deftheme nibelung "Minimalistic theme inspired by doom-plain and doom-flatwhite")
 ;; (setq custom--inhibit-theme-enable nil)
 ;; (setq all-the-icons-color-icons nil)
 ;; (setq nerd-icons-color-icons nil)
@@ -70,7 +70,7 @@
        )
 
   (custom-theme-set-faces
-   'nibelung-theme
+   'nibelung
    `(default ((t (:background ,bg))))
    `(cursor ((t (:background ,fgwhite :foreground ,fgwhite))))
    `(highlight ,highlight)
@@ -202,9 +202,15 @@
    ;;
    )
   )
-;;;###autoload
-(when (and (boundp 'custom-theme-load-path) load-file-name)
-  (add-to-list 'custom-theme-load-path
-    (file-name-as-directory (file-name-directory load-file-name))))
 
-(provide-theme 'nibelung-theme)
+;;;###autoload
+(and load-file-name
+     (boundp 'custom-theme-load-path)
+     (add-to-list 'custom-theme-load-path
+                  (file-name-as-directory
+                   (file-name-directory load-file-name))))
+
+
+(provide-theme 'nibelung)
+
+(provide 'nibelung-theme)
