@@ -87,7 +87,7 @@
   (custom-theme-set-faces
    'nibelung
    `(default ((t (:background ,bg))))
-   `(cursor ((t (:background ,fgwhite :foreground ,fgwhite))))
+   `(cursor ((t (:background ,fgwhite :foreground ,fg))))
    `(highlight ,highlight)
    ;; Constant
    `(font-lock-builtin-face ,constant)
@@ -110,6 +110,7 @@
    `(message-header-cc ,text)
    `(message-header-to ,text)
    `(minibuffer-prompt ,code-block-header)
+   `(marginalia-documentation ,optional)
    `(custom-set ,text)
    `(icon ,optional)
    `(+fold-hideshow-folded-face ,optional)
@@ -158,6 +159,7 @@
    ;; Org Mode
    `(+org-todo-cancel ,code-block-header)
    `(org-agenda-date ,text)
+   `(org-agenda-date-today ,code-block-header)
    `(org-agenda-date-weekend ,text)
    `(org-agenda-done ,optional)
    `(org-agenda-structure ,text)
@@ -165,10 +167,11 @@
    `(org-block-begin-line ,code-block-header)
    `(org-block-end-line ,code-block-header)
    `(org-done ,optional)
+   `(org-document-title ,constant)
    `(org-ellipsis ,optional)
    `(org-headline-done ,optional)
    `(org-list-dt ,constant)
-   `(org-meta-line ,header-not-extended)
+   `(org-meta-line ,constant)
    `(org-modern-done ,org-done)
    `(org-modern-label ,code-block-header)
    `(org-modern-label ,org-todo*)
@@ -178,6 +181,7 @@
    `(outline-2 ((t (:extend t :background ,graytwo :foreground ,fgwhite))))
    `(outline-3 ((t (:extend t :background ,graythree :foreground ,fgwhite))))
    `(outline-4 ((t (:extend t :background ,blueone :foreground ,fg))))
+   `(org-table ,constant)
    ;; Dired
    `(diredfl-file-suffix ,constant)
    `(diredfl-compressed-file-suffix ,constant)
@@ -236,6 +240,10 @@
    `(transient-heading ,code-block-header)
    `(transient-value ,match)
    `(transient-argument ,match)
+   ;; Treesitter
+   `(ts-fold-replacement-face ,optional)
+   ;; Cider
+   `(cider-result-overlay-face ,modeline-indicator)
    ;;
    )
   )
