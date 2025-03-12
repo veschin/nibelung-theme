@@ -44,9 +44,11 @@
        (bluetwo    "#C1D3FE")
        (bluethree  "#B6CCFE")
        (bluefour   "#ABC4FF")
+       (matchblue  "#9BB1FF")
 
        (fg         graythree)
        (fgwhite    "#E9ECEF")
+
 
        ;; Rainbow
        (lightblue  "#BEE1E6")
@@ -67,7 +69,7 @@
        (header-not-extended `((t (:extend nil :background ,graytwo :foreground ,fgwhite))))
        (highlight `((t (:background ,graytwo :foreground ,fgwhite))))
        (link `((t (:foreground ,fg :underline t))))
-       (match `((t (:background ,bluelight))))
+       (match `((t (:background ,matchblue :foreground ,lighttwo))))
        (modeline `((t (:background ,fg :foreground ,fgwhite))))
        (modeline-indicator header)
        (modeline-white `((t (:foreground ,fg :background ,fgwhite))))
