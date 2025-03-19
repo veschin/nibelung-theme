@@ -178,6 +178,8 @@
    `(org-modern-label ,code-block-header)
    `(org-modern-label ,org-todo*)
    `(org-modern-todo ,org-todo*)
+   `(org-modern-progress-complete ,org-done)
+   `(org-modern-progress-incomplete ,org-todo*)
    `(org-todo ,org-todo*)
    `(outline-1 ((t (:extend t :background ,grayone :foreground ,fgwhite))))
    `(outline-2 ((t (:extend t :background ,graytwo :foreground ,fgwhite))))
