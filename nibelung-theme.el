@@ -89,19 +89,19 @@
   (custom-theme-set-faces
    'nibelung
    `(default ((t (:background ,bg))))
-   `(cursor ((t (:background ,fgwhite :foreground ,fg))))
+   `(cursor ((t (:inverse-video t))))
    `(highlight ,highlight)
    ;; Constant
    `(font-lock-builtin-face ,constant)
    `(font-lock-constant-face ,constant)
    `(highlight-quoted-symbol ,symbol)
-   `(font-lock-keyword-face ((t (:foreground ,grayone))))
+   `(font-lock-keyword-face ((t (:foreground ,graytwo))))
    `(font-lock-string-face ,string*)
    `(font-lock-type-face ((t (:foreground ,grayone))))
    `(font-lock-function-name-face ,function)
    `(font-lock-variable-name-face ,variable)
    ;; Comment
-   `(font-lock-comment-delimiter-face ((t (:extend nil :foreground ,grayzero :background ,graytwo))))
+   `(font-lock-comment-delimiter-face ((t (:extend t :background ,graylight :foreground ,grayzero))))
    `(font-lock-comment-face ,comment)
    `(font-lock-doc-face ((t (:background ,grayzero :foreground ,graylight :slant italic))))
    `(font-lock-warning-face ((t (:foreground ,fg))))
