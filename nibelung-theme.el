@@ -124,6 +124,8 @@
    `(company-tooltip-selection ,header)
    `(company-tooltip-scrollbar-thumb ,header)
    `(company-tooltip-scrollbar-track ,variable)
+   `(company-echo-common ,variable)
+   `(company-tooltip-annotation ,variable)
    ;; Match
    `(evil-ex-lazy-highlight ,match)
    `(match ,match)
