@@ -103,7 +103,7 @@
    ;; Comment
    `(font-lock-comment-delimiter-face ((t (:extend t :background ,graylight :foreground ,grayzero))))
    `(font-lock-comment-face ,comment)
-   `(font-lock-doc-face ((t (:background ,grayzero :foreground ,graylight :slant italic))))
+   `(font-lock-doc-face ((t (:background ,grayzero :foreground ,lighttwo :slant italic))))
    `(font-lock-warning-face ((t (:foreground ,fg))))
    ;; Misc
    `(line-number ((t (:background ,bg :foreground ,fg))))
@@ -141,6 +141,7 @@
    `(success ,header)
    `(warning ,header)
    `(error ,header)
+   `(flymake-error ((t (:extend t :background ,matchblue :foreground ,fg))))
    ;; Modeline
    `(doom-nano-modeline-evil-insert-state-face ,modeline-indicator)
    `(doom-nano-modeline-evil-motion-state-face ,modeline-indicator)
@@ -183,6 +184,7 @@
    `(org-modern-progress-complete ,org-done)
    `(org-modern-progress-incomplete ,org-todo*)
    `(org-todo ,org-todo*)
+   `(org-checkbox ,optional)
    `(outline-3 ((t (:extend t :foreground ,grayone ))))
    `(outline-2 ((t (:extend t :foreground ,graytwo ))))
    `(outline-1 ((t (:extend t :foreground ,graythree ))))
