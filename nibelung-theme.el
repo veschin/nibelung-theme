@@ -67,7 +67,7 @@
        (function `((t (:foreground ,grayone))))
        (header `((t (:background ,graytwo :foreground ,fgwhite))))
        (header-not-extended `((t (:extend nil :background ,graytwo :foreground ,fgwhite))))
-       (highlight `((t (:background ,grayone :foreground ,fgwhite))))
+       (highlight `((t (:reverse t :background ,grayone :foreground ,fgwhite))))
        (link `((t (:foreground ,fg :underline t))))
        (match `((t (:background ,matchblue :foreground ,lighttwo))))
        (modeline `((t (:background ,fg :foreground ,fgwhite))))
@@ -89,7 +89,7 @@
   (custom-theme-set-faces
    'nibelung
    `(default ((t (:background ,bg))))
-   `(cursor ((t (:inverse-video t))))
+   `(cursor ((t (:inverse t :background ,lightone :foreground ,fg))))
    `(highlight ,highlight)
    ;; Constant
    `(font-lock-builtin-face ,constant)
