@@ -141,6 +141,7 @@
    `(warning ,header)
    `(error ,header)
    `(flymake-error ((t (:extend t :background ,matchblue :foreground ,fg))))
+   `(flymake-warning ((t (:underline (:color ,matchblue :style line :position t)))))
    ;; Modeline
    `(doom-nano-modeline-evil-insert-state-face ,modeline-indicator)
    `(doom-nano-modeline-evil-motion-state-face ,modeline-indicator)
@@ -251,6 +252,9 @@
    `(ts-fold-replacement-face ,optional)
    ;; Cider
    `(cider-result-overlay-face ,modeline-indicator)
+   `(cider-test-success-face ,match)
+   `(cider-error-overlay-face ,replace-confirm)
+   `(cider-test-failure-face ,replace-confirm)
    ;;
    )
   )
