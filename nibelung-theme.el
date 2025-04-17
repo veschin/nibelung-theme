@@ -63,7 +63,7 @@
        (code-block `((t (:extend t :background ,lightone))))
        (code-block-header `((t (:extend t :background ,lighttwo :foreground ,fg))))
        (constant `((t (:foreground ,grayone))))
-       (comment `((t (:extend t :background ,graylight :foreground ,grayone))))
+       (comment `((t (:extend t :background ,graylight :foreground ,graytwo))))
        (function `((t (:foreground ,grayone))))
        (header `((t (:background ,graytwo :foreground ,fgwhite))))
        (header-not-extended `((t (:extend nil :background ,graytwo :foreground ,fgwhite))))
@@ -76,7 +76,7 @@
        (optional `((t (:foreground ,graylight))))
        (replace-confirm `((t (:background ,grayone :foreground ,fgwhite))))
        (replace-match* `((t (:background ,graythree :foreground ,fgwhite))))
-       (string* `((t (:background ,grayzero :foreground ,fg))))
+       (string* `((t (:background ,lightone :foreground ,fg))))
        (symbol `((t (:foreground ,graythree))))
        (text `((t (:foreground ,fg :weight normal :normal t))))
        (variable constant)
@@ -85,7 +85,6 @@
        (org-done `((t (:inverse-video t :foreground ,fg :height 0.95 ,@lpadding))))
        ;; End palette
        )
-
   (custom-theme-set-faces
    'nibelung
    `(default ((t (:background ,bg))))
