@@ -100,9 +100,9 @@
    `(font-lock-function-name-face ,function)
    `(font-lock-variable-name-face ,variable)
    ;; Comment
-   `(font-lock-comment-delimiter-face ((t (:extend t :background ,graylight :foreground ,grayzero))))
+   `(font-lock-comment-delimiter-face ,comment)
    `(font-lock-comment-face ,comment)
-   `(font-lock-doc-face ((t (:background ,grayzero :foreground ,lighttwo :slant italic))))
+   `(font-lock-doc-face ,optional)
    `(font-lock-warning-face ((t (:foreground ,fg))))
    ;; Misc
    `(whitespace-tab ,optional)
