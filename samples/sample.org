@@ -1,0 +1,54 @@
+#+TITLE: Org-mode Demo
+#+AUTHOR: Your Name
+#+STARTUP: overview indent content hidestars
+
+* TODO [#B] Org-mode Basics :work:
+SCHEDULED: <2023-12-01>
+:PROPERTIES:
+:CREATED:  [2023-11-25]
+:END:
+** Core Features
+*** Hierarchical Headings
+    - Press Tab to fold/unfold sections
+    - Multi-level document organization
+*** Table Calculations
+| Item        | Price | Quantity | Total          |
+|-------------+-------+----------+----------------|
+| Pencil      |  1.20 |        5 | =$2*$3         |
+| Notebook    |  4.50 |        2 | =$2*$3         |
+|-------------+-------+----------+----------------|
+| Grand Total |       |          | =vsum(@2..@-1) |
+
+#+TBLFM: @>$4=vsum(@2..@-1)
+** Code & Export :tech:
+*** Syntax-Highlighted Code
+#+BEGIN_SRC python :results output
+def hello():
+    print("Org-babel works!")
+hello()
+#+END_SRC
+*** Export Options
+1. C-c C-e l p → PDF via LaTeX
+2. C-c C-e h h → HTML
+** Links & Navigation
+- [[https://orgmode.org][Official Website]]
+- [[*Core Features][Internal Link]]
+- file:~/Documents/notes.org
+** Metadata & Tracking
+:LOGBOOK:
+- State "DONE" from "TODO" [2023-11-26]
+CLOCK: [2023-11-25 10:00]--[2023-11-25 12:00] =>  2:00
+:END:
+
+* [#A] Advanced Features [50%]
+** TODO Progress Tracking
+- [X] Basic setup
+- [ ] Table formulas
+- [ ] Custom exports
+** DONE Dynamic Blocks
+#+BEGIN: clocktable :maxlevel 2
+#+END:
+** System Comments
+# This comment is only visible in editor
+*** Hidden Section :noexport:
+This text won't appear in exports

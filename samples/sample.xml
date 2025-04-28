@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Book catalog structure -->
+<catalog>
+  <book id="bk101">
+    <title>Programming Basics</title>
+    <price>39.95</price>
+  </book>
+</catalog>

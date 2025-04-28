@@ -39,32 +39,35 @@ Doom Emacs
 U should disable any other theme
 * Screenshots
 ** Org mode
-[[images/org-mode.png]]
-[[images/cursor.png]]
+[[images/org_mode.png]]
+[[images/org_modern.png]]
 ** Magit
-[[images/magit1.png]]
-[[images/magit2.png]]
+[[images/magit.png]]
+[[images/magit_diff.png]]
+[[images/buffer_select.png]]
 ** C++
-[[images/c++.png]]
+[[images/cpp.png]]
 ** Clojure
 [[images/clojure.png]]
-[[images/edn.png]]
 ** Elisp
 [[images/elisp+theme.png]]
-** Elixir
-[[images/elixir.png]]
 ** Haskell
 [[images/haskell.png]]
-** Java
-[[images/java.png]]
-** JavaScript
-[[images/javascript.png]]
+** YAML/JSON
 [[images/json.png]]
-[[images/typescript.png]]
 [[images/yaml.png]]
+** TypeScript
+[[images/ts.png]]
 ** Lua
 [[images/lua.png]]
 ** Python
 [[images/python.png]]
 ** XML
 [[images/xml.png]]
+** Java
+[[images/java.png]]
+** Bash
+[[images/bash.png]]
+** Dired
+[[images/dired_full.png]]
+[[images/dired_git.png]]

@@ -1,0 +1,9 @@
+{
+  "description": "Company data structure",
+  "departments": [
+    {
+      "note": "Engineering team details",
+      "employees": 50
+    }
+  ]
+}
