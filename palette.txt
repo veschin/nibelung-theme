@@ -1,0 +1,54 @@
+;; Base Colors
+bg        #F8F9FA
+lightone  #E9ECEF
+lighttwo  #DEE2E6
+graylight #CED4DA
+grayzero  #ADB5BD
+grayone   #6C757D
+graytwo   #495057
+graythree #343A40
+grayfour  #212529
+bluelight #E2EAFC
+bluezero  #D7E3FC
+blueone   #CCDBFD
+bluetwo   #C1D3FE
+bluethree #B6CCFE
+bluefour  #ABC4FF
+matchblue #9BB1FF
+fg        #343A40
+fgwhite   #E9ECEF
+
+;; Special Colors
+lightblue  #BEE1E6
+linen      #FFF1E6
+magnolia   #EAE4E9
+mimipink   #FAD2E1
+mint-cream #E2ECE9
+misty-rose #FDE2E4
+vistablue  #9FA0FF
+
+;; UI Elements
+code-block :background #E9ECEF :extend
+code-block-header :background #DEE2E6 :foreground #343A40 :extend
+constant :foreground #6C757D
+comment :background #CED4DA :foreground #495057 :extend
+function :foreground #6C757D
+header :background #495057 :foreground #E9ECEF
+header-not-extended :background #495057 :foreground #E9ECEF :no-extend
+highlight :background #6C757D :foreground #E9ECEF :override
+link :foreground #343A40 :underline
+match :background #9BB1FF :foreground #DEE2E6
+modeline :background #343A40 :foreground #E9ECEF
+modeline-indicator :inherit header
+modeline-white :foreground #343A40 :background #E9ECEF
+optional :foreground #CED4DA
+replace-confirm :background #6C757D :foreground #E9ECEF
+replace-match* :background #343A40 :foreground #E9ECEF
+string* :background #E9ECEF :foreground #343A40
+symbol :foreground #343A40
+text :foreground #343A40 :weight normal
+variable :inherit constant
+
+;; Org-mode
+org-todo* :background #F8F9FA :foreground #343A40 :height 0.95 :padding-box
+org-done :inverse-video :foreground #343A40 :height 0.95 :padding-box
