@@ -83,8 +83,8 @@
        (bold `((t (:foreground ,matchblue))))
        (variable constant)
        (lpadding '(:box (:line-width (10 . 1) :style flat-button)))
-       (org-todo* `((t (:background ,bg :foreground ,fg :height 0.95 ,@lpadding))))
-       (org-done `((t (:inverse-video t :foreground ,fg :height 0.95 ,@lpadding))))
+       (org-todo* `((t (:background ,fg :foreground ,fgwhite :height 0.95 ,@lpadding))))
+       (org-done `((t (:background ,bg :foreground ,fg :height 0.95 ,@lpadding))))
        ;; End palette
        )
   (custom-theme-set-faces
@@ -200,14 +200,15 @@
    `(org-date ,link)
    `(org-drawer ,optional)
    `(org-checkbox ,optional)
+   `(org-list-dt ,optional)
    `(outline-3 ((t (:foreground ,grayone ))))
    `(outline-2 ((t (:foreground ,graytwo))))
    `(outline-1 ((t (:foreground ,graythree))))
-   `(outline-4 ((t (:foreground ,matchblue))))
+   `(outline-4 ((t (:foreground ,vistablue))))
    `(markdown-header-face-3 ((t (:foreground ,grayone ))))
    `(markdown-header-face-2 ((t (:foreground ,graytwo))))
    `(markdown-header-face-1 ((t (:foreground ,graythree))))
-   `(markdown-header-face-4 ((t (:foreground ,matchblue))))
+   `(markdown-header-face-4 ((t (:foreground ,vistablue))))
    `(org-table ,constant)
    ;; Dired
    `(diredfl-file-suffix ,constant)
