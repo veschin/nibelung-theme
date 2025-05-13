@@ -22,6 +22,7 @@ type FeatureFlags = {
     darkMode: boolean;
     newDashboard: boolean;
 };
+
 type Options = {
     [Key in keyof FeatureFlags]: string;
 };
