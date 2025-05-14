@@ -75,7 +75,6 @@
        (modeline-white `((t (:foreground ,fg :background ,fgwhite))))
        (optional `((t (:foreground ,graylight))))
        (comment `((t (:extend t :background ,lightone :foreground ,grayzero))))
-       (comment-no-ext `((t (:background ,lightone :foreground ,grayzero))))
        (replace-confirm `((t (:background ,grayone :foreground ,fgwhite))))
        (replace-match* `((t (:background ,graythree :foreground ,fgwhite))))
        (string* `((t (:background ,lightone :foreground ,grayfour))))
@@ -153,6 +152,8 @@
    `(isearch ,replace-match*)
    `(lazy-highlight ,replace-match*)
    `(evil-ex-substitute-replacement ,replace-confirm)
+   `(orderless-match-face-2 ,bold)
+   `(orderless-match-face-3 ,bold)
    ;; Warnings
    `(success ,header)
    `(warning ,header)
