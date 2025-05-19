@@ -181,6 +181,7 @@
    `(mode-line-highlight ,modeline)
    `(mode-line-faces ,modeline)
    `(mode-line-inactive ,modeline-white)
+   `(doom-dashboard-loaded ,builtin)
    ;; Links
    `(diary ,link)
    `(link ,link)
