@@ -1,0 +1,370 @@
+;;; nibelung-dark-theme.el --- Description -*- lexical-binding: t; -*-
+;;
+;; Copyright (C) 2025
+;;
+;; Author:  <veschin@desktop>
+;; Maintainer:  <veschin@desktop>
+;; Created: May 21, 2025
+;; Modified: May 21, 2025
+;; Version: 0.0.1
+;; Keywords: Symbol’s value as variable is void: finder-known-keywords
+;; Homepage: https://github.com/veschin/nibelung-dark-theme
+;; Package-Requires: ((emacs "24.3"))
+;;
+;; This file is not part of GNU Emacs.
+;;
+;;; Commentary:
+;;
+;;  Description
+;;
+;;; Code:
+;; #F8F9FA
+;; #E9ECEF
+;; #DEE2E6
+;; #CED4DA
+;; #ADB5BD
+;; #6C757D
+;; #495057
+;; #343A40
+;; #2B3035
+;; #212529
+;; #000000
+
+;; #EDF2FB
+;; #E2EAFC
+;; #D7E3FC
+;; #CCDBFD
+;; #C1D3FE
+;; #B6CCFE
+;; #ABC4FF
+(deftheme nibelung-dark "Minimalistic theme inspired by doom-plain and doom-flatwhite")
+(setq custom--inhibit-theme-enable nil)
+;; (setq all-the-icons-color-icons nil)
+;; (setq nerd-icons-color-icons nil)
+(setq org-modern-checkbox '((88 . "[d]") (32 . "[ ]")))
+(setq org-modern-fold-stars '((" •" . " •") (" ◦" . " ◦") (" ∞" . " ∞")))
+(setq org-src-tab-acts-natively t)
+(setq rainbow-delimiters-max-face-count 4)
+(set-face-attribute 'line-number nil :inherit 'default)
+
+
+(let* (;; Color palette
+       (bg         "#212529")  ; grayfour → основной фон
+       (darkzero   "#2B3035")
+       (darkone    "#343A40")
+       (darktwo    "#495057")
+       (darkthree  "#6C757D")
+
+       (grayfour   "#F8F9FA")
+       (graythree  "#E9ECEF")
+       (graytwo    "#DEE2E6")
+       (grayone    "#CED4DA")
+       (grayzero   "#ADB5BD")
+
+       (bluelight  "#2B375C")
+       (bluezero   "#364872")
+       (blueone    "#415A89")
+       (bluetwo    "#4C6BA0")
+       (bluethree  "#577DB7")
+       (bluefour   "#628ECE")
+       (matchblue  "#4a5678")
+
+       (fg         grayone)
+       (fgdark     darkone)
+
+       ;; Rainbow
+       (vistablue     "#9FA0FF")
+       (melon         "#FFADAD")
+       (sunset        "#FFD6A5")
+       (cream         "#FDFFB6")
+       (tea-green     "#CAFFBF")
+       (electric-blue "#9BF6FF")
+       (jordy-blue    "#A0C4FF")
+       (mauve         "#FFC6FF")
+
+       (bold `((t (:foreground ,matchblue))))
+       (builtin `((t (:foreground ,darkthree))))
+       (code-block `((t (:extend t :background ,darkone))))
+       (code-block-header `((t (:extend t :background ,darktwo :foreground ,fg))))
+       (comment `((t (:extend t :background ,darkzero :foreground ,darkthree))))
+       (constant `((t (:foreground ,grayzero))))
+       (cursor `((t (:inverse t :background ,darkone :foreground ,fg))))
+       (default `((t (:foreground ,fg :background ,bg))))
+       (function `((t (:foreground ,fg))))
+       (header `((t (:background ,darkone :foreground ,fg))))
+       (header-not-extended `((t (:extend nil :background ,darktwo :foreground ,fgdark))))
+       (highlight `((t (:override t :background ,darkone :foreground ,fg :distant-foreground ,fg))))
+       (link `((t (:foreground ,bluefour :underline t))))
+       (lpadding '(:box (:line-width (10 . 1) :style flat-button)))
+       (match `((t (:background ,matchblue :foreground ,graythree))))
+       (modeline `((t (:background ,bg :foreground ,fg))))
+       (modeline-indicator header)
+       (modeline-white `((t (:foreground ,darkone :background ,fg))))
+       (optional `((t (:foreground ,darktwo))))
+       (org-done `((t (:background ,bg :foreground ,fg :height 0.95 ,@lpadding))))
+       (org-todo* `((t (:background ,fg :foreground ,bg :height 0.95 ,@lpadding))))
+       (replace-confirm `((t (:background ,darkone :foreground ,fg))))
+       (replace-match* `((t (:background ,darktwo :foreground ,fg))))
+       (string* `((t (:background ,darkone :foreground ,grayfour))))
+       (symbol `((t (:foreground ,fg))))
+       (text `((t (:foreground ,fg :weight normal :normal t))))
+       (type builtin)
+       (variable constant)
+       )
+
+  (custom-theme-set-faces
+   'nibelung
+   `(default ,default)
+   `(cursor ,cursor)
+   `(highlight ,highlight)
+   `(hl-line ,highlight)
+   ;; Constant
+   `(font-lock-builtin-face ,builtin)
+   `(font-lock-preprocessor-face ,type)
+   `(font-lock-constant-face ,constant)
+   `(font-lock-function-call-face ,link)
+   `(highlight-quoted-symbol ,symbol)
+   `(font-lock-keyword-face ,optional)
+   `(clojure-keyword-face ,builtin)
+   `(font-lock-string-face ,string*)
+   `(font-lock-type-face ,type)
+   `(font-lock-function-name-face ,function)
+   `(font-lock-variable-name-face ,variable)
+   `(font-lock-escape-face ,optional)
+   `(font-lock-operator-face ,optional)
+   ;; Comment
+   `(font-lock-comment-delimiter-face ,comment)
+   `(font-lock-comment-face ,comment)
+   `(font-lock-doc-face ,optional)
+   `(font-lock-warning-face ((t (:foreground ,fg))))
+   ;; Misc
+   `(whitespace-tab ,optional)
+   `(sh-quoted-exec ,optional)
+   `(line-number ((t (:background ,bg :foreground ,fg))))
+   `(message-header-newsgroups ,text)
+   `(message-header-xheader ,text)
+   `(message-header-cc ,text)
+   `(message-header-to ,text)
+   `(minibuffer-prompt ,code-block-header)
+   `(marginalia-documentation ,optional)
+   `(custom-set ,text)
+   `(icon ,optional)
+   `(+fold-hideshow-folded-face ,optional)
+   `(read-multiple-choice-face ,text)
+   `(helpful-heading ,comment)
+   ;; Custom Menu
+   `(custom-variable-tag ,variable)
+   `(custom-variable-documentation ,optional)
+   `(custom-documentation ,optional)
+   `(custom-state ,bold)
+   `(custom-visibility ,bold)
+   `(custom-group-tag ,header)
+   `(custom-button-unraised ,constant)
+   `(custom-button ,function)
+   `(custom-button-mouse ,header)
+   `(widget-field ,symbol)
+   `(widget-unselected ,optional)
+   ;; Company
+   (setq company-format-margin-function nil)
+   `(company-tooltip ,function)
+   `(company-tooltip-common ,match)
+   `(company-tooltip-selection ,header)
+   `(company-tooltip-scrollbar-thumb ,header)
+   `(company-tooltip-scrollbar-track ,variable)
+   `(company-echo-common ,variable)
+   `(company-tooltip-annotation ,variable)
+   ;; Match
+   `(evil-ex-lazy-highlight ,match)
+   `(match ,match)
+   `(region ,match)
+   `(bold ,bold)
+   `(orderless-match-face-0 ,match)
+   `(orderless-match-face-1 ,match)
+   `(show-paren-match ,match)
+   `(isearch ,replace-match*)
+   `(lazy-highlight ,replace-match*)
+   `(evil-ex-substitute-replacement ,replace-confirm)
+   `(orderless-match-face-2 ,bold)
+   `(orderless-match-face-3 ,bold)
+   ;; Warnings
+   `(success ,optional)
+   `(warning ,header)
+   `(error ,header)
+   `(flymake-error ((t (:extend t :background ,matchblue :foreground ,fg))))
+   `(flymake-warning ((t (:underline (:color ,matchblue :style line :position t)))))
+   ;; Modeline
+   `(doom-nano-modeline-evil-insert-state-face ,modeline-indicator)
+   `(doom-nano-modeline-evil-motion-state-face ,modeline-indicator)
+   `(doom-nano-modeline-evil-visual-state-face ,modeline-indicator)
+   `(doom-nano-modeline-evil-emacs-state-face ,modeline-indicator)
+   `(doom-nano-modeline-evil-operator-state-face ,modeline-indicator)
+   `(doom-nano-modeline-evil-normal-state-face ,modeline-indicator)
+   `(doom-nano-modeline-inactive ,modeline-white)
+   `(doom-nano-modeline-cursor-position-face ,modeline)
+   `(doom-nano-modeline-vc-branch-name-face ,modeline-indicator)
+   `(mode-line ,modeline)
+   `(mode-line-buffer-id ,modeline)
+   `(mode-line-emphasis ,modeline)
+   `(mode-line-highlight ,modeline)
+   `(mode-line-faces ,modeline)
+   `(mode-line-inactive ,modeline-white)
+   `(doom-dashboard-loaded ,builtin)
+   ;; Links
+   `(diary ,link)
+   `(link ,link)
+   ;; Org Mode
+   `(+org-todo-cancel ,code-block-header)
+   `(org-agenda-date ,text)
+   `(org-agenda-date-today ,code-block-header)
+   `(org-agenda-date-weekend ,text)
+   `(org-agenda-done ,optional)
+   `(org-agenda-structure ,text)
+   `(org-block ,code-block)
+   `(org-quote ,code-block)
+   `(org-block-begin-line ,code-block-header)
+   `(org-block-end-line ,code-block-header)
+   `(org-done ,optional)
+   `(org-document-title ,constant)
+   `(org-ellipsis ,optional)
+   `(org-headline-done ,optional)
+   `(org-list-dt ,constant)
+   `(org-meta-line ,constant)
+   `(org-modern-done ,org-done)
+   `(org-modern-block-name ,constant)
+   `(org-modern-label ,org-todo*)
+   `(org-modern-todo ,org-todo*)
+   `(org-modern-tag ,org-done)
+   `(org-modern-date-active ,org-todo*)
+   `(org-modern-date-inactive ,org-done)
+   `(org-modern-time-active ,org-todo*)
+   `(org-modern-time-inactive ,org-done)
+   `(org-modern-progress-complete ,org-done)
+   `(org-modern-progress-incomplete ,org-todo*)
+   `(org-formula ,bold)
+   `(org-document-info ,symbol)
+   `(org-todo ,org-todo*)
+   `(org-tag ,function)
+   `(org-date ,link)
+   `(org-drawer ,optional)
+   `(org-checkbox ,optional)
+   `(org-list-dt ,optional)
+   `(outline-3 ((t (:foreground ,grayone))))
+   `(outline-2 ((t (:foreground ,graytwo))))
+   `(outline-1 ((t (:foreground ,graythree))))
+   `(outline-4 ((t (:foreground ,vistablue))))
+   `(markdown-header-face-3 ((t (:foreground ,grayone ))))
+   `(markdown-header-face-2 ((t (:foreground ,graytwo))))
+   `(markdown-header-face-1 ((t (:foreground ,graythree))))
+   `(markdown-header-face-4 ((t (:foreground ,vistablue))))
+   `(org-table ,constant)
+   ;; Dired
+   `(diredfl-file-suffix ,constant)
+   `(diredfl-compressed-file-suffix ,constant)
+   `(diredfl-file-name ,text)
+   `(diredfl-dir-name ,code-block-header)
+   `(diredfl-dir-heading ,code-block-header)
+   `(diredfl-ignored-file-name ,optional)
+   `(diredfl-ignored ,optional)
+   `(diredfl-symlink ,link)
+   `(dgi-commit-message-face ,optional)
+   `(diredfl-dir-priv ,text)
+   `(diredfl-exec-priv ,text)
+   `(diredfl-no-priv ,optional)
+   `(diredfl-link-priv ,text)
+   `(diredfl-read-priv ,optional)
+   `(diredfl-write-priv ,optional)
+   `(diredfl-rare-priv ,text)
+   `(diredfl-date-time ,optional)
+   `(diredfl-number ,constant)
+   `(diredfl-deletion ,replace-confirm)
+   `(diredfl-deletion-file-name ,replace-confirm)
+   `(help-key-binding ,text)
+   ;; Rainbow delimeters
+   `(rainbow-delimiters-depth-4-face ((t (:foreground ,grayone))))
+   `(rainbow-delimiters-depth-3-face ((t (:foreground ,vistablue))))
+   `(rainbow-delimiters-depth-2-face ((t (:foreground ,grayzero))))
+   `(rainbow-delimiters-depth-1-face ((t (:foreground ,bluethree))))
+   `(rainbow-delimiters-unmatched-face ,header)
+   `(rainbow-delimiters-base-error-face ,header)
+   `(rainbow-delimiters-mismatched-face ,header)
+   ;; Magit
+   `(magit-tag ,header)
+   `(magit-section-highlight ((t (:background ,bg :foreground ,fg))))
+   `(magit-diff-context-highlight ((t (:foreground ,fg))))
+   `(magit-branch-local ,match)
+   `(magit-branch-remote ,header)
+   `(magit-section-heading ,code-block-header)
+   `(magit-branch-current ,match)
+   `(magit-hash ,optional)
+   `(magit-reflog-commit ,comment)
+   `(magit-diff-added ,replace-match*)
+   `(magit-diff-added-highlight ,replace-match*)
+   `(magit-diff-removed ,replace-confirm)
+   `(magit-diff-removed-highlight ,replace-confirm)
+   `(diff-refine-added ,match)
+   `(diff-refine-removed ,variable)
+   `(magit-diff-removed-highlight ,variable)
+   `(magit-diff-lines-heading ,match)
+   `(magit-section-heading ,variable)
+   `(magit-diff-hunk-heading ,constant)
+   `(magit-diff-hunk-heading-highlight ,constant)
+   `(magit-diff-file-heading ,symbol)
+   `(magit-diffstat-added ,match)
+   `(magit-diffstat-removed ,variable)
+   `(magit-log-author ,optional)
+   ;; Transient
+   `(transient-key-stay ,text)
+   `(transient-key-exit ,constant)
+   `(transient-heading ,code-block-header)
+   `(transient-value ,match)
+   `(transient-argument ,match)
+   ;; Treesitter
+   `(ts-fold-replacement-face ,optional)
+   ;; Cider
+   `(cider-result-overlay-face ,modeline-indicator)
+   `(cider-test-success-face ,match)
+   `(cider-error-overlay-face ,replace-confirm)
+   `(cider-test-failure-face ,replace-confirm)
+   ;; Eshell
+   `(eshell-syntax-highlighting-shell-command-face ,bold)
+   `(eshell-prompt ,optional)
+   `(eshell-syntax-highlighting-invalid-face ,match)
+   ;; Colors
+   `(ansi-color-black          ((t (:foreground ,grayfour))))
+   `(ansi-color-blue           ((t (:foreground ,vistablue))))
+   `(ansi-color-bright-black   ((t (:foreground ,graytwo))))
+   `(ansi-color-bright-blue    ((t (:foreground ,electric-blue))))
+   `(ansi-color-bright-cyan    ((t (:foreground ,tea-green))))
+   `(ansi-color-bright-green   ((t (:foreground ,tea-green))))
+   `(ansi-color-bright-magenta ((t (:foreground ,cream))))
+   `(ansi-color-bright-red     ((t (:foreground ,melon))))
+   `(ansi-color-bright-white   ((t (:foreground ,jordy-blue))))
+   `(ansi-color-bright-yellow  ((t (:foreground ,cream))))
+   `(ansi-color-cyan           ((t (:foreground ,electric-blue))))
+   `(ansi-color-faint          ((t (:foreground ,sunset))))
+   `(ansi-color-fast-blink     ((t (:foreground ,vistablue))))
+   `(ansi-color-green          ((t (:foreground ,tea-green))))
+   `(ansi-color-inverse        ((t (:foreground ,sunset))))
+   `(ansi-color-italic         ((t (:foreground ,jordy-blue))))
+   `(ansi-color-magenta        ((t (:foreground ,mauve))))
+   `(ansi-color-red            ((t (:foreground ,melon))))
+   `(ansi-color-slow-blink     ((t (:foreground ,mauve))))
+   `(ansi-color-underline      ,link)
+   `(ansi-color-white          ((t (:foreground ,sunset))))
+   `(ansi-color-yellow         ((t (:foreground ,cream))))
+   `(ansi-color-bold ,bold)
+   )
+  )
+
+
+;;;###autoload
+(and load-file-name
+     (boundp 'custom-theme-load-path)
+     (add-to-list 'custom-theme-load-path
+                  (file-name-as-directory
+                   (file-name-directory load-file-name))))
+
+
+(provide-theme 'nibelung-dark)
+
+(provide 'nibelung-dark-theme)
