@@ -1,23 +1,5 @@
-;;; nibelung-dark-theme.el --- Description -*- lexical-binding: t; -*-
-;;
-;; Copyright (C) 2025
-;;
-;; Author:  <veschin@desktop>
-;; Maintainer:  <veschin@desktop>
-;; Created: May 21, 2025
-;; Modified: May 21, 2025
-;; Version: 0.0.1
-;; Keywords: Symbol’s value as variable is void: finder-known-keywords
-;; Homepage: https://github.com/veschin/nibelung-dark-theme
-;; Package-Requires: ((emacs "24.3"))
-;;
-;; This file is not part of GNU Emacs.
-;;
-;;; Commentary:
-;;
-;;  Description
-;;
-;;; Code:
+;;; nibelung-dark-theme.el ---  -*- lexical-binding: t; -*-
+
 ;; #F8F9FA
 ;; #E9ECEF
 ;; #DEE2E6
@@ -37,7 +19,7 @@
 ;; #C1D3FE
 ;; #B6CCFE
 ;; #ABC4FF
-(deftheme nibelung-dark "Minimalistic theme inspired by doom-plain and doom-flatwhite")
+(deftheme nibelung-dark "Minimalistic dark theme inspired by doom-plain and doom-flatwhite")
 (setq custom--inhibit-theme-enable nil)
 ;; (setq all-the-icons-color-icons nil)
 ;; (setq nerd-icons-color-icons nil)
@@ -113,7 +95,7 @@
        )
 
   (custom-theme-set-faces
-   'nibelung
+   'nibelung-dark
    `(default ,default)
    `(cursor ,cursor)
    `(highlight ,highlight)
