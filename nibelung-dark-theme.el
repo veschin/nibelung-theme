@@ -112,8 +112,9 @@
    `(font-lock-type-face ,type)
    `(font-lock-function-name-face ,function)
    `(font-lock-variable-name-face ,variable)
-   `(font-lock-bracket-face ,cursor)
-   `(tree-sitter-hl-face:punctuation ,cursor)
+   `(font-lock-bracket-face ,optional)
+   `(tree-sitter-hl-face:punctuation ,optional)
+   `(tree-sitter-hl-face:punctuation.delimiter ,optional)
    `(font-lock-escape-face ,optional)
    `(font-lock-operator-face ,optional)
    ;; Comment
@@ -122,6 +123,7 @@
    `(font-lock-doc-face ,optional)
    `(font-lock-warning-face ((t (:foreground ,fg))))
    ;; Misc
+   `(shadow ,optional)
    `(whitespace-tab ,optional)
    `(sh-quoted-exec ,optional)
    `(line-number ((t (:background ,bg :foreground ,fg))))
@@ -309,6 +311,7 @@
    `(cider-test-success-face ,match)
    `(cider-error-overlay-face ,replace-confirm)
    `(cider-test-failure-face ,replace-confirm)
+   `(cider-instrumented-face ,link)
    ;; Eshell
    `(eshell-syntax-highlighting-shell-command-face ,bold)
    `(eshell-prompt ,optional)
