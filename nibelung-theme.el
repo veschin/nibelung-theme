@@ -19,6 +19,8 @@
 ;; #B6CCFE
 ;; #ABC4FF
 
+;; (require 'theme-gen)
+
 (deftheme nibelung "Minimalistic theme inspired by doom-plain and doom-flatwhite")
 (setq custom--inhibit-theme-enable nil)
 ;; (setq all-the-icons-color-icons nil)
@@ -192,6 +194,7 @@
    `(link ,link)
    ;; Org Mode
    `(+org-todo-cancel ,code-block-header)
+   `(org-hide ((t (:foreground ,bg))))
    `(org-agenda-date ,text)
    `(org-agenda-date-today ,code-block-header)
    `(org-agenda-date-weekend ,text)
@@ -218,6 +221,11 @@
    `(org-modern-time-inactive ,org-done)
    `(org-modern-progress-complete ,org-done)
    `(org-modern-progress-incomplete ,org-todo*)
+   `(org-modern-priority ((t (:background ,grayzero
+                              :foreground ,graytwo
+                              :box (:line-width (2 . 1)
+                                    :color ,bg
+                                    :style flat-button)))))
    `(org-formula ,match)
    `(org-document-info ,symbol)
    `(org-todo ,org-todo*)
@@ -226,10 +234,10 @@
    `(org-drawer ,optional)
    `(org-checkbox ,optional)
    `(org-list-dt ,optional)
-   `(outline-3 ((t (:foreground ,grayone ))))
-   `(outline-2 ((t (:foreground ,graytwo))))
-   `(outline-1 ((t (:foreground ,graythree))))
-   `(outline-4 ((t (:foreground ,vistablue))))
+   `(outline-3 ,constant)
+   `(outline-2 ,symbol)
+   `(outline-1 ,function)
+   `(outline-4 ,bold)
    `(markdown-header-face-3 ((t (:foreground ,grayone ))))
    `(markdown-header-face-2 ((t (:foreground ,graytwo))))
    `(markdown-header-face-1 ((t (:foreground ,graythree))))
