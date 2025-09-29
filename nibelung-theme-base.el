@@ -29,32 +29,32 @@
          (rainbow-magenta    (plist-get palette :rainbow-magenta))
 
          ;; FACES definitions
-         (bold `((t (:foreground ,emphasis))))
-         (builtin `((t (:foreground ,level3))))
-         (code-block `((t (:extend t :background ,level0))))
-         (code-block-header `((t (:extend t :background ,level1 :foreground ,fg))))
-         (comment `((t (:extend t :background ,comment-bg :foreground ,level3))))
-         (constant `((t (:foreground ,level4))))
+         (bold `((t (:foreground ,emphasis :weight normal))))
+         (builtin `((t (:foreground ,level3 :weight normal))))
+         (code-block `((t (:extend t :background ,level0 :weight normal))))
+         (code-block-header `((t (:extend t :background ,level1 :foreground ,fg :weight normal))))
+         (comment `((t (:extend t :background ,comment-bg :foreground ,level3 :weight normal))))
+         (constant `((t (:foreground ,level4 :weight normal))))
          (cursor `((t (:inverse-video t :background ,fg :foreground ,bg))))
-         (default `((t (:foreground ,fg :background ,bg))))
-         (function `((t (:foreground ,level5))))
-         (header `((t (:background ,level4 :foreground ,level0))))
-         (header-not-extended `((t (:extend nil :background ,level4 :foreground ,level0))))
-         (highlight `((t (:override t :background ,level4 :foreground ,level0 :distant-foreground ,level0))))
-         (link `((t (:foreground ,link-color :underline t))))
+         (default `((t (:foreground ,fg :background ,bg :weight normal))))
+         (function `((t (:foreground ,level5 :weight normal))))
+         (header `((t (:background ,level4 :foreground ,level0 :weight normal))))
+         (header-not-extended `((t (:extend nil :background ,level4 :foreground ,level0 :weight normal))))
+         (highlight `((t (:override t :background ,level4 :foreground ,level0 :distant-foreground ,level0 :weight normal))))
+         (link `((t (:foreground ,link-color :underline t :weight normal))))
          (lpadding '(:box (:line-width (10 . 1) :style flat-button)))
-         (match `((t (:background ,emphasis :foreground ,level1))))
-         (modeline `((t (:background ,fg :foreground ,level0))))
+         (match `((t (:background ,emphasis :foreground ,level1 :weight normal))))
+         (modeline `((t (:background ,fg :foreground ,level0 :weight normal))))
          (modeline-indicator header)
-         (modeline-white `((t (:foreground ,level5 :background ,level0))))
-         (optional `((t (:foreground ,level2))))
-         (org-done `((t (:background ,bg :foreground ,fg :height 0.95 ,@lpadding))))
-         (org-todo* `((t (:background ,fg :foreground ,bg :height 0.95 ,@lpadding))))
-         (replace-confirm `((t (:background ,level4 :foreground ,level0))))
-         (replace-match* `((t (:background ,level5 :foreground ,level0))))
-         (string* `((t (:background ,string-bg :foreground ,level6))))
-         (symbol `((t (:foreground ,level5))))
-         (text `((t (:foreground ,fg :weight normal :normal t))))
+         (modeline-white `((t (:foreground ,level5 :background ,level0 :weight normal))))
+         (optional `((t (:foreground ,level2 :weight normal))))
+         (org-done `((t (:background ,bg :foreground ,fg :height 0.95 :weight normal ,@lpadding))))
+         (org-todo* `((t (:background ,fg :foreground ,bg :height 0.95 :weight normal ,@lpadding))))
+         (replace-confirm `((t (:background ,level4 :foreground ,level0 :weight normal))))
+         (replace-match* `((t (:background ,level5 :foreground ,level0 :weight normal))))
+         (string* `((t (:background ,string-bg :foreground ,level6 :weight normal))))
+         (symbol `((t (:foreground ,level5 :weight normal))))
+         (text `((t (:foreground ,fg :weight normal))))
          (type builtin)
          (variable constant))
 
@@ -63,7 +63,8 @@
      `(default ,default)
      `(cursor ,cursor)
      `(highlight ,highlight)
-     `(hl-line ,highlight)
+     `(hl-line ((t (:background ,level0 :weight normal))))
+     `(bold ((t (:foreground ,emphasis :weight normal))))
      ;; Constant
      `(font-lock-builtin-face ,builtin)
      `(font-lock-preprocessor-face ,type)
@@ -72,13 +73,16 @@
      `(highlight-quoted-symbol ,symbol)
      `(font-lock-keyword-face ,optional)
      `(clojure-keyword-face ,builtin)
-     `(font-lock-string-face ,string*)
+     `(font-lock-string-face ((t (:foreground ,level4 :weight normal))))
+     `(font-lock-delimiter-face ((t (:foreground ,emphasis :weight normal))))
      `(font-lock-type-face ,type)
      `(font-lock-function-name-face ,function)
      `(font-lock-variable-name-face ,variable)
      `(font-lock-bracket-face ,optional)
      `(tree-sitter-hl-face:punctuation ,optional)
      `(tree-sitter-hl-face:punctuation.delimiter ,optional)
+     `(tree-sitter-hl-face:string ((t (:foreground ,level4))))
+     `(tree-sitter-hl-face:string.special ((t (:foreground ,emphasis))))
      `(font-lock-escape-face ,optional)
      `(font-lock-operator-face ,optional)
      ;; Comment
@@ -253,20 +257,19 @@
      `(magit-branch-current ,match)
      `(magit-hash ,optional)
      `(magit-reflog-commit ,comment)
-     `(magit-diff-added ,replace-match*)
-     `(magit-diff-added-highlight ,replace-match*)
-     `(magit-diff-removed ,replace-confirm)
-     `(magit-diff-removed-highlight ,replace-confirm)
-     `(diff-refine-added ,match)
-     `(diff-refine-removed ,variable)
-     `(magit-diff-removed-highlight ,variable)
+     `(magit-diff-added ((t (:background ,bg :foreground ,rainbow-green))))
+     `(magit-diff-added-highlight ((t (:background ,bg :foreground ,rainbow-green))))
+     `(magit-diff-removed ((t (:background ,bg :foreground ,rainbow-red))))
+     `(magit-diff-removed-highlight ((t (:background ,bg :foreground ,rainbow-red))))
+     `(diff-refine-added ((t (:background ,level1 :foreground ,rainbow-green ))))
+     `(diff-refine-removed ((t (:background ,level1 :foreground ,rainbow-red ))))
      `(magit-diff-lines-heading ,match)
      `(magit-section-heading ,variable)
-     `(magit-diff-hunk-heading ,constant)
-     `(magit-diff-hunk-heading-highlight ,constant)
+     `(magit-diff-hunk-heading ((t (:background ,level1 :foreground ,fg))))
+     `(magit-diff-hunk-heading-highlight ((t (:background ,level1 :foreground ,fg))))
      `(magit-diff-file-heading ,symbol)
-     `(magit-diffstat-added ,match)
-     `(magit-diffstat-removed ,variable)
+     `(magit-diffstat-added ((t (:foreground ,rainbow-green))))
+     `(magit-diffstat-removed ((t (:foreground ,rainbow-red))))
      `(magit-log-author ,optional)
      ;; Transient
      `(transient-key-stay ,text)
@@ -309,7 +312,122 @@
      `(ansi-color-underline      ,link)
      `(ansi-color-white          ((t (:foreground ,rainbow-orange))))
      `(ansi-color-yellow         ((t (:foreground ,rainbow-yellow))))
-     `(ansi-color-bold ,bold))))
+     `(ansi-color-bold ,bold)
+
+     ;; ========================================
+     ;; EXPERIMENTAL FACES
+     ;; ========================================
+     ;; These faces are work in progress and may not be fully tested
+     ;; Contributions and feedback welcome
+
+     ;; Doom Modeline
+     `(doom-modeline-bar ((t (:background ,emphasis))))
+     `(doom-modeline-bar-inactive ((t (:background ,level2))))
+     `(doom-modeline-buffer-file ((t (:foreground ,fg ))))
+     `(doom-modeline-buffer-path ((t (:foreground ,level4))))
+     `(doom-modeline-buffer-modified ((t (:foreground ,emphasis ))))
+     `(doom-modeline-buffer-major-mode ((t (:foreground ,level4))))
+     `(doom-modeline-project-dir ((t (:foreground ,level4))))
+     `(doom-modeline-project-root-dir ((t (:foreground ,fg))))
+     `(doom-modeline-info ((t (:foreground ,emphasis))))
+     `(doom-modeline-warning ((t (:foreground ,level4 ))))
+     `(doom-modeline-urgent ((t (:foreground ,level5 ))))
+     `(doom-modeline-debug ((t (:foreground ,level5))))
+
+     ;; LSP
+     `(lsp-face-highlight-textual ((t (:background ,level1))))
+     `(lsp-face-highlight-read ((t (:background ,level1 :underline t))))
+     `(lsp-face-highlight-write ((t (:background ,level1 ))))
+     `(lsp-ui-doc-background ((t (:background ,level0))))
+     `(lsp-ui-doc-border ((t (:foreground ,level2))))
+     `(lsp-ui-doc-header ((t (:background ,level1 :foreground ,fg))))
+     `(lsp-ui-sideline-code-action ((t (:foreground ,emphasis))))
+     `(lsp-ui-sideline-current-symbol ((t (:foreground ,emphasis ))))
+     `(lsp-ui-sideline-symbol ((t (:foreground ,level3))))
+
+     ;; Flycheck
+     `(flycheck-error ((t (:underline (:color ,level5 :style wave)))))
+     `(flycheck-warning ((t (:underline (:color ,level4 :style wave)))))
+     `(flycheck-info ((t (:underline (:color ,emphasis :style wave)))))
+     `(flycheck-fringe-error ((t (:foreground ,level5))))
+     `(flycheck-fringe-warning ((t (:foreground ,level4))))
+     `(flycheck-fringe-info ((t (:foreground ,emphasis))))
+
+     ;; Git Gutter
+     `(git-gutter:added ((t (:foreground ,emphasis ))))
+     `(git-gutter:deleted ((t (:foreground ,level5 ))))
+     `(git-gutter:modified ((t (:foreground ,level4 ))))
+     `(git-gutter:unchanged ((t (:foreground ,level2))))
+     `(git-gutter-fr:added ((t (:foreground ,emphasis ))))
+     `(git-gutter-fr:deleted ((t (:foreground ,level5 ))))
+     `(git-gutter-fr:modified ((t (:foreground ,level4 ))))
+
+     ;; Diff-HL
+     `(diff-hl-change ((t (:foreground ,level4 :background ,level1))))
+     `(diff-hl-delete ((t (:foreground ,level5 :background ,level1))))
+     `(diff-hl-insert ((t (:foreground ,emphasis :background ,level1))))
+
+     ;; Vertico
+     `(vertico-current ((t (:background ,level1 :foreground ,fg))))
+     `(vertico-group-title ((t (:foreground ,level4 ))))
+     `(vertico-group-separator ((t (:foreground ,level2))))
+
+     ;; Consult
+     `(consult-file ((t (:foreground ,fg))))
+     `(consult-bookmark ((t (:foreground ,emphasis))))
+     `(consult-buffer ((t (:foreground ,fg))))
+     `(consult-line-number ((t (:foreground ,level3))))
+     `(consult-separator ((t (:foreground ,level2))))
+
+     ;; Which-key
+     `(which-key-key-face ((t (:foreground ,emphasis))))
+     `(which-key-separator-face ((t (:foreground ,level2))))
+     `(which-key-command-description-face ((t (:foreground ,fg))))
+     `(which-key-group-description-face ((t (:foreground ,level4))))
+     `(which-key-special-key-face ((t (:foreground ,level5 ))))
+     `(which-key-highlighted-command-face ((t (:foreground ,emphasis ))))
+
+     ;; Treemacs
+     `(treemacs-root-face ((t (:foreground ,fg  :height 1.1))))
+     `(treemacs-directory-face ((t (:foreground ,fg))))
+     `(treemacs-file-face ((t (:foreground ,fg))))
+     `(treemacs-git-modified-face ((t (:foreground ,level4))))
+     `(treemacs-git-added-face ((t (:foreground ,emphasis))))
+     `(treemacs-git-conflict-face ((t (:foreground ,level5))))
+     `(treemacs-git-untracked-face ((t (:foreground ,level3))))
+     `(treemacs-git-ignored-face ((t (:foreground ,level2))))
+
+     ;; Solaire Mode
+     `(solaire-default-face ((t (:background ,level0))))
+     `(solaire-hl-line-face ((t (:background ,level1))))
+     `(solaire-mode-line-face ((t (:background ,fg :foreground ,level0))))
+     `(solaire-mode-line-inactive-face ((t (:background ,level1 :foreground ,level4))))
+
+     ;; Popup
+     `(popup-face ((t (:background ,level0 :foreground ,fg))))
+     `(popup-menu-selection-face ((t (:background ,level1 :foreground ,fg))))
+     `(popup-tip-face ((t (:background ,level1 :foreground ,fg))))
+
+     ;; Indent Guides
+     `(highlight-indent-guides-odd-face ((t (:background ,level0))))
+     `(highlight-indent-guides-even-face ((t (:background ,bg))))
+     `(highlight-indentation-face ((t (:background ,level0))))
+
+     ;; Avy
+     `(avy-lead-face ((t (:background ,emphasis :foreground ,level0 ))))
+     `(avy-lead-face-0 ((t (:background ,level4 :foreground ,level0 ))))
+     `(avy-lead-face-1 ((t (:background ,level3 :foreground ,level0 ))))
+     `(avy-lead-face-2 ((t (:background ,level4 :foreground ,level0 ))))
+     `(avy-background-face ((t (:foreground ,level2))))
+
+     ;; Ediff
+     `(ediff-current-diff-A ((t (:background ,level1 :foreground ,level5))))
+     `(ediff-current-diff-B ((t (:background ,level1 :foreground ,emphasis))))
+     `(ediff-current-diff-C ((t (:background ,level1 :foreground ,level4))))
+     `(ediff-fine-diff-A ((t (:background ,level2 :foreground ,level5 ))))
+     `(ediff-fine-diff-B ((t (:background ,level2 :foreground ,emphasis ))))
+     `(ediff-fine-diff-C ((t (:background ,level2 :foreground ,level4 ))))
+     )))
 
 (provide 'nibelung-theme-base)
 ;;; nibelung-theme-base.el ends here

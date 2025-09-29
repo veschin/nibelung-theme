@@ -3,7 +3,7 @@
 (defconst nibelung-light-palette
   '(;; Base colors
     :bg         "#F8F9FA"
-    :fg         "#343A40"
+    :fg         "#495057"
 
     ;; Lightness levels (light to dark)
     :level0     "#E9ECEF"
@@ -11,7 +11,7 @@
     :level2     "#CED4DA"
     :level3     "#ADB5BD"
     :level4     "#6C757D"
-    :level5     "#495057"
+    :level5     "#343A40"
     :level6     "#212529"
 
     ;; Accent colors (blue shades)
@@ -22,9 +22,9 @@
 
     ;; Semantic roles
     :emphasis     "#9BB1FF"
-    :link         "#343A40"
+    :link         "#9BB1FF"
     :string-bg    "#E9ECEF"
-    :comment-bg   "#CED4DA"
+    :comment-bg   "#E9ECEF"
 
     ;; Rainbow colors (darker)
     :rainbow-blue       "#7B8CDE"
