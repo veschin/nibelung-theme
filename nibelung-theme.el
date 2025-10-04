@@ -11,7 +11,6 @@
 (setq org-modern-fold-stars '((" •" . " •") (" ◦" . " ◦") (" ∞" . " ∞")))
 (setq org-src-tab-acts-natively t)
 (setq rainbow-delimiters-max-face-count 4)
-(set-face-attribute 'line-number nil :inherit 'default)
 
 ;; Generate theme using light palette
 (nibelung-theme-create 'nibelung nibelung-light-palette)
