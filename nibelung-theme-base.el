@@ -68,7 +68,7 @@
      `(font-lock-builtin-face ,builtin)
      `(font-lock-preprocessor-face ,type)
      `(font-lock-constant-face ,constant)
-     `(font-lock-function-call-face ,link)
+     `(font-lock-function-call-face ,bold)
      `(highlight-quoted-symbol ,symbol)
      `(font-lock-keyword-face ,constant)
      `(clojure-keyword-face ,builtin)
