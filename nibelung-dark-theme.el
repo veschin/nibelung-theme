@@ -5,13 +5,6 @@
 
 (deftheme nibelung-dark "Minimalistic dark theme inspired by doom-plain and doom-flatwhite")
 
-;; Theme settings
-(setq custom--inhibit-theme-enable nil)
-(setq org-modern-checkbox '((88 . "[d]") (32 . "[ ]")))
-(setq org-modern-fold-stars '((" •" . " •") (" ◦" . " ◦") (" ∞" . " ∞")))
-(setq org-src-tab-acts-natively t)
-(setq rainbow-delimiters-max-face-count 4)
-
 ;; Generate theme using dark palette
 (nibelung-theme-create 'nibelung-dark nibelung-dark-palette)
 
