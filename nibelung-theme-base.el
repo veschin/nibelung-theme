@@ -556,10 +556,10 @@
      `(eglot-diagnostic-tag-deprecated-face ((t (:strike-through t))))
      `(eglot-diagnostic-tag-unnecessary-face ,optional)
      `(eglot-highlight-symbol-face ((t (:background ,level1))))
-     `(eglot-inlay-hint-face ((t (:foreground ,level3 :height 0.9))))
+     `(eglot-inlay-hint-face ((t (:foreground ,level3))))
      `(eglot-mode-line ((t (:foreground ,level4))))
-     `(eglot-parameter-hint-face ((t (:foreground ,level3 :height 0.9))))
-     `(eglot-type-hint-face ((t (:foreground ,level3 :height 0.9))))
+     `(eglot-parameter-hint-face ((t (:foreground ,level3))))
+     `(eglot-type-hint-face ((t (:foreground ,level3))))
      ;; Eglot semantic tokens — types
      `(eglot-semantic-class ,builtin)
      `(eglot-semantic-enum ,builtin)
@@ -802,7 +802,7 @@
      `(dape-expression-face ,bold)
      `(dape-hits-face ,optional)
      `(dape-log-face ,optional)
-     `(dape-inlay-hint-face ((t (:foreground ,level3 :height 0.9))))
+     `(dape-inlay-hint-face ((t (:foreground ,level3))))
      `(dape-header-line-active-face ((t (:background ,level0 :foreground ,emphasis))))
      `(dape-header-line-inactive-face ((t (:background ,level0 :foreground ,level3))))
 
