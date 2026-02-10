@@ -40,6 +40,17 @@ Doom Emacs
 ;; or
 (setq doom-theme 'nibelung-dark)
 #+end_src
+For ~package.el~
+#+begin_src emacs-lisp 
+(use-package nibelung-theme
+  :vc ( :url "https://github.com/veschin/nibelung-theme"
+	:rev :newest)
+  :ensure t
+  :config
+  (load-theme 'nibelung t)
+  ;; or
+  (load-theme 'nibelung-dark t))
+#+end_src
 ** Warning
 U should disable any other theme
 * Preview
