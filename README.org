@@ -26,6 +26,8 @@ Emacs
 (straight-use-package
  '(nibelung-theme :type git :host github :repo "veschin/nibelung-theme"))
 (load-theme 'nibelung t)
+;; or
+(load-theme 'nibelung-dark t)
 #+end_src
 Doom Emacs
 #+begin_src emacs-lisp
@@ -35,40 +37,10 @@ Doom Emacs
            :repo "veschin/nibelung-theme"))
 ;; config.el
 (setq doom-theme 'nibelung)
+;; or
+(setq doom-theme 'nibelung-dark)
 #+end_src
 ** Warning
 U should disable any other theme
-* Screenshots
-** Org mode
-[[images/org_mode.png]]
-[[images/org_modern.png]]
-** Magit
-[[images/magit.png]]
-[[images/magit_diff.png]]
-[[images/buffer_select.png]]
-** C++
-[[images/cpp.png]]
-** Clojure
-[[images/clojure.png]]
-** Elisp
-[[images/elisp+theme.png]]
-** Haskell
-[[images/haskell.png]]
-** YAML/JSON
-[[images/json.png]]
-[[images/yaml.png]]
-** TypeScript
-[[images/ts.png]]
-** Lua
-[[images/lua.png]]
-** Python
-[[images/python.png]]
-** XML
-[[images/xml.png]]
-** Java
-[[images/java.png]]
-** Bash
-[[images/bash.png]]
-** Dired
-[[images/dired_full.png]]
-[[images/dired_git.png]]
+* Preview
+[[nibelung_preview.gif]]
