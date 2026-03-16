@@ -1,3 +1,4 @@
 /.lsp/
 /.clj-kondo/
 *.elc
+__pycache__/

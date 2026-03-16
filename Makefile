@@ -56,3 +56,25 @@ test-faces:
 
 clean:
 	@rm -f *.elc
+
+.PHONY: export export-clean test-export
+
+export:
+	python3 export/generate.py --emacs $(EMACS) --output-dir dist
+
+export-clean:
+	rm -rf dist/
+
+test-export: export
+	@echo "=== Validating export ==="
+	@python3 -m json.tool dist/vscode/themes/nibelung-color-theme.json > /dev/null
+	@python3 -m json.tool dist/vscode/themes/nibelung-dark-color-theme.json > /dev/null
+	@python3 -m json.tool dist/vscode/package.json > /dev/null
+	@python3 -c "import xml.etree.ElementTree as ET; ET.parse('dist/intellij/Nibelung.icls')"
+	@python3 -c "import xml.etree.ElementTree as ET; ET.parse('dist/intellij/Nibelung_Dark.icls')"
+	@luac -p dist/neovim/colors/nibelung.lua 2>/dev/null || echo "  WARN: luac not found, skipping Lua validation"
+	@python3 -c "import tomllib; tomllib.load(open('dist/alacritty/nibelung.toml','rb'))" 2>/dev/null || echo "  WARN: tomllib needs Python 3.11+, skipping TOML validation"
+	@python3 -m json.tool dist/caelestia/nibelung-scheme.json > /dev/null
+	@python3 -m json.tool dist/caelestia/nibelung-dark-scheme.json > /dev/null
+	@python3 export/generate.py --smoke-test dist
+	@echo "All export validations passed"

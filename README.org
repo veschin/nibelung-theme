@@ -20,27 +20,29 @@ Nibelung Theme is a minimalist Emacs color scheme blending cool gray tones and s
   + Org Mode
   + Rainbow delimiters
 * Installation
-Emacs
+** Emacs
 #+begin_src emacs-lisp
 ;; init.el
 (straight-use-package
- '(nibelung-theme :type git :host github :repo "veschin/nibelung-theme"))
+ '(nibelung-theme :type git :host github :repo "veschin/nibelung-theme"
+                  :files ("*.el")))
 (load-theme 'nibelung t)
 ;; or
 (load-theme 'nibelung-dark t)
 #+end_src
-Doom Emacs
+** Doom Emacs
 #+begin_src emacs-lisp
 ;; packages.el
 (package! nibelung-theme
   :recipe (:host github
-           :repo "veschin/nibelung-theme"))
+           :repo "veschin/nibelung-theme"
+           :files ("*.el")))
 ;; config.el
 (setq doom-theme 'nibelung)
 ;; or
 (setq doom-theme 'nibelung-dark)
 #+end_src
-For ~package.el~
+** package.el
 #+begin_src emacs-lisp 
 (use-package nibelung-theme
   :vc ( :url "https://github.com/veschin/nibelung-theme"
@@ -53,5 +55,36 @@ For ~package.el~
 #+end_src
 ** Warning
 U should disable any other theme
+* Other Editors
+Themes for VSCode, Neovim, IntelliJ IDEA, and Alacritty are generated from the same palette. Find them in the ~dist/~ directory.
+** VSCode
+#+begin_src sh
+git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
+  cp -r /tmp/nibelung/dist/vscode ~/.vscode/extensions/nibelung-theme
+#+end_src
+Then: ~Ctrl+K Ctrl+T~ → select "Nibelung" or "Nibelung Dark"
+** Neovim
+#+begin_src sh
+git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
+  mkdir -p ~/.config/nvim/colors && \
+  cp /tmp/nibelung/dist/neovim/colors/*.lua ~/.config/nvim/colors/
+#+end_src
+Then in ~init.lua~: ~vim.cmd("colorscheme nibelung")~ or ~vim.cmd("colorscheme nibelung-dark")~
+** IntelliJ IDEA
+#+begin_src sh
+cp dist/intellij/*.icls ~/.config/JetBrains/*/colors/
+#+end_src
+Then: Settings → Editor → Color Scheme → select "Nibelung" or "Nibelung Dark"
+** Alacritty
+#+begin_src sh
+curl -o ~/.config/alacritty/nibelung.toml \
+  https://raw.githubusercontent.com/veschin/nibelung-theme/main/dist/alacritty/nibelung.toml
+#+end_src
+Then add to ~alacritty.toml~ under ~[general]~: ~import = ["~/.config/alacritty/nibelung.toml"]~
+** Caelestia / Quickshell
+#+begin_src sh
+cp dist/caelestia/nibelung-dark-scheme.json ~/.local/state/caelestia/scheme.json
+#+end_src
+For the light variant, use ~nibelung-scheme.json~ instead. Caelestia hot-reloads the scheme automatically.
 * Preview
 [[nibelung_preview.gif]]

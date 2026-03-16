@@ -1,0 +1,26 @@
+{
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Nibelung",
+        "path": "./themes/nibelung-color-theme.json",
+        "uiTheme": "vs"
+      },
+      {
+        "label": "Nibelung Dark",
+        "path": "./themes/nibelung-dark-color-theme.json",
+        "uiTheme": "vs-dark"
+      }
+    ]
+  },
+  "description": "Minimalist color theme with cool grays and subtle blue accents",
+  "displayName": "Nibelung",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "name": "nibelung-theme",
+  "version": "0.1.0"
+}
