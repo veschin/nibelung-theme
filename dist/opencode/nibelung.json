@@ -1,0 +1,257 @@
+{
+  "$schema": "https://opencode.ai/theme.json",
+  "defs": {
+    "d-accent-bright": "#628ECE",
+    "d-accent-light": "#577DB7",
+    "d-accent-match": "#9BB1FF",
+    "d-accent-subtle": "#2B375C",
+    "d-bg": "#212529",
+    "d-comment-bg": "#2B3035",
+    "d-emphasis": "#9BB1FF",
+    "d-fg": "#CED4DA",
+    "d-level0": "#2B3035",
+    "d-level1": "#343A40",
+    "d-level2": "#495057",
+    "d-level3": "#6C757D",
+    "d-level4": "#ADB5BD",
+    "d-level5": "#DEE2E6",
+    "d-level6": "#F8F9FA",
+    "d-link": "#9BB1FF",
+    "d-rainbow-blue": "#9FA0FF",
+    "d-rainbow-bluelight": "#A0C4FF",
+    "d-rainbow-cyan": "#9BF6FF",
+    "d-rainbow-green": "#CAFFBF",
+    "d-rainbow-magenta": "#FFC6FF",
+    "d-rainbow-orange": "#FFD6A5",
+    "d-rainbow-red": "#FFADAD",
+    "d-rainbow-yellow": "#FDFFB6",
+    "d-string-bg": "#343A40",
+    "l-accent-bright": "#ABC4FF",
+    "l-accent-light": "#B6CCFE",
+    "l-accent-match": "#9BB1FF",
+    "l-accent-subtle": "#E2EAFC",
+    "l-bg": "#F8F9FA",
+    "l-comment-bg": "#E9ECEF",
+    "l-emphasis": "#9BB1FF",
+    "l-fg": "#495057",
+    "l-level0": "#E9ECEF",
+    "l-level1": "#DEE2E6",
+    "l-level2": "#CED4DA",
+    "l-level3": "#ADB5BD",
+    "l-level4": "#6C757D",
+    "l-level5": "#343A40",
+    "l-level6": "#212529",
+    "l-link": "#9BB1FF",
+    "l-rainbow-blue": "#7B8CDE",
+    "l-rainbow-bluelight": "#8BA3D7",
+    "l-rainbow-cyan": "#7EB8B8",
+    "l-rainbow-green": "#8FBF9F",
+    "l-rainbow-magenta": "#C99BC9",
+    "l-rainbow-orange": "#D4A574",
+    "l-rainbow-red": "#E08E8E",
+    "l-rainbow-yellow": "#C9C97D",
+    "l-string-bg": "#E9ECEF"
+  },
+  "theme": {
+    "accent": {
+      "dark": "d-accent-light",
+      "light": "l-accent-light"
+    },
+    "background": {
+      "dark": "d-bg",
+      "light": "l-bg"
+    },
+    "backgroundElement": {
+      "dark": "d-level1",
+      "light": "l-level1"
+    },
+    "backgroundPanel": {
+      "dark": "d-level0",
+      "light": "l-level0"
+    },
+    "border": {
+      "dark": "d-level2",
+      "light": "l-level2"
+    },
+    "borderActive": {
+      "dark": "d-level3",
+      "light": "l-level3"
+    },
+    "borderSubtle": {
+      "dark": "d-level1",
+      "light": "l-level1"
+    },
+    "diffAdded": {
+      "dark": "d-rainbow-green",
+      "light": "l-rainbow-green"
+    },
+    "diffAddedBg": {
+      "dark": "d-level0",
+      "light": "l-level0"
+    },
+    "diffAddedLineNumberBg": {
+      "dark": "d-level0",
+      "light": "l-level0"
+    },
+    "diffContext": {
+      "dark": "d-level3",
+      "light": "l-level3"
+    },
+    "diffContextBg": {
+      "dark": "d-level0",
+      "light": "l-level0"
+    },
+    "diffHighlightAdded": {
+      "dark": "d-rainbow-green",
+      "light": "l-rainbow-green"
+    },
+    "diffHighlightRemoved": {
+      "dark": "d-rainbow-red",
+      "light": "l-rainbow-red"
+    },
+    "diffHunkHeader": {
+      "dark": "d-level3",
+      "light": "l-level3"
+    },
+    "diffLineNumber": {
+      "dark": "d-level2",
+      "light": "l-level2"
+    },
+    "diffRemoved": {
+      "dark": "d-rainbow-red",
+      "light": "l-rainbow-red"
+    },
+    "diffRemovedBg": {
+      "dark": "d-level0",
+      "light": "l-level0"
+    },
+    "diffRemovedLineNumberBg": {
+      "dark": "d-level0",
+      "light": "l-level0"
+    },
+    "error": {
+      "dark": "d-rainbow-red",
+      "light": "l-rainbow-red"
+    },
+    "info": {
+      "dark": "d-accent-bright",
+      "light": "l-accent-bright"
+    },
+    "markdownBlockQuote": {
+      "dark": "d-level3",
+      "light": "l-level3"
+    },
+    "markdownCode": {
+      "dark": "d-rainbow-green",
+      "light": "l-rainbow-green"
+    },
+    "markdownCodeBlock": {
+      "dark": "d-fg",
+      "light": "l-fg"
+    },
+    "markdownEmph": {
+      "dark": "d-accent-bright",
+      "light": "l-accent-bright"
+    },
+    "markdownHeading": {
+      "dark": "d-accent-match",
+      "light": "l-accent-match"
+    },
+    "markdownHorizontalRule": {
+      "dark": "d-level2",
+      "light": "l-level2"
+    },
+    "markdownImage": {
+      "dark": "d-accent-match",
+      "light": "l-accent-match"
+    },
+    "markdownImageText": {
+      "dark": "d-accent-light",
+      "light": "l-accent-light"
+    },
+    "markdownLink": {
+      "dark": "d-link",
+      "light": "l-link"
+    },
+    "markdownLinkText": {
+      "dark": "d-accent-match",
+      "light": "l-accent-match"
+    },
+    "markdownListEnumeration": {
+      "dark": "d-accent-light",
+      "light": "l-accent-light"
+    },
+    "markdownListItem": {
+      "dark": "d-accent-match",
+      "light": "l-accent-match"
+    },
+    "markdownStrong": {
+      "dark": "d-level5",
+      "light": "l-level5"
+    },
+    "markdownText": {
+      "dark": "d-fg",
+      "light": "l-fg"
+    },
+    "primary": {
+      "dark": "d-accent-match",
+      "light": "l-accent-match"
+    },
+    "secondary": {
+      "dark": "d-accent-bright",
+      "light": "l-accent-bright"
+    },
+    "success": {
+      "dark": "d-rainbow-green",
+      "light": "l-rainbow-green"
+    },
+    "syntaxComment": {
+      "dark": "d-level3",
+      "light": "l-level3"
+    },
+    "syntaxFunction": {
+      "dark": "d-rainbow-blue",
+      "light": "l-rainbow-blue"
+    },
+    "syntaxKeyword": {
+      "dark": "d-accent-match",
+      "light": "l-accent-match"
+    },
+    "syntaxNumber": {
+      "dark": "d-rainbow-orange",
+      "light": "l-rainbow-orange"
+    },
+    "syntaxOperator": {
+      "dark": "d-level4",
+      "light": "l-level4"
+    },
+    "syntaxPunctuation": {
+      "dark": "d-level3",
+      "light": "l-level3"
+    },
+    "syntaxString": {
+      "dark": "d-rainbow-green",
+      "light": "l-rainbow-green"
+    },
+    "syntaxType": {
+      "dark": "d-rainbow-bluelight",
+      "light": "l-rainbow-bluelight"
+    },
+    "syntaxVariable": {
+      "dark": "d-rainbow-cyan",
+      "light": "l-rainbow-cyan"
+    },
+    "text": {
+      "dark": "d-fg",
+      "light": "l-fg"
+    },
+    "textMuted": {
+      "dark": "d-level3",
+      "light": "l-level3"
+    },
+    "warning": {
+      "dark": "d-rainbow-orange",
+      "light": "l-rainbow-orange"
+    }
+  }
+}

@@ -794,6 +794,90 @@ def generate_caelestia(light_p, dark_p, output_dir):
 
 
 # ---------------------------------------------------------------------------
+# OpenCode backend
+# ---------------------------------------------------------------------------
+
+def _opencode_theme(light_p, dark_p):
+    defs = {}
+    for key, val in light_p.items():
+        defs[f"l-{key}"] = val
+    for key, val in dark_p.items():
+        defs[f"d-{key}"] = val
+
+    def dl(l_key, d_key):
+        return {"dark": f"d-{d_key}", "light": f"l-{l_key}"}
+
+    def same(key):
+        return dl(key, key)
+
+    theme = {
+        "primary":                same("accent-match"),
+        "secondary":              same("accent-bright"),
+        "accent":                 same("accent-light"),
+        "error":                  same("rainbow-red"),
+        "warning":                same("rainbow-orange"),
+        "success":                same("rainbow-green"),
+        "info":                   same("accent-bright"),
+        "text":                   same("fg"),
+        "textMuted":              same("level3"),
+        "background":             same("bg"),
+        "backgroundPanel":        same("level0"),
+        "backgroundElement":      same("level1"),
+        "border":                 same("level2"),
+        "borderActive":           same("level3"),
+        "borderSubtle":           same("level1"),
+        "diffAdded":              same("rainbow-green"),
+        "diffRemoved":            same("rainbow-red"),
+        "diffContext":            same("level3"),
+        "diffHunkHeader":         same("level3"),
+        "diffHighlightAdded":     same("rainbow-green"),
+        "diffHighlightRemoved":   same("rainbow-red"),
+        "diffAddedBg":            same("level0"),
+        "diffRemovedBg":          same("level0"),
+        "diffContextBg":          same("level0"),
+        "diffLineNumber":         same("level2"),
+        "diffAddedLineNumberBg":  same("level0"),
+        "diffRemovedLineNumberBg":same("level0"),
+        "markdownText":           same("fg"),
+        "markdownHeading":        same("accent-match"),
+        "markdownLink":           same("link"),
+        "markdownLinkText":       same("accent-match"),
+        "markdownCode":           same("rainbow-green"),
+        "markdownBlockQuote":     same("level3"),
+        "markdownEmph":           same("accent-bright"),
+        "markdownStrong":         same("level5"),
+        "markdownHorizontalRule": same("level2"),
+        "markdownListItem":       same("accent-match"),
+        "markdownListEnumeration":same("accent-light"),
+        "markdownImage":          same("accent-match"),
+        "markdownImageText":      same("accent-light"),
+        "markdownCodeBlock":      same("fg"),
+        "syntaxComment":          same("level3"),
+        "syntaxKeyword":          same("accent-match"),
+        "syntaxFunction":         same("rainbow-blue"),
+        "syntaxVariable":         same("rainbow-cyan"),
+        "syntaxString":           same("rainbow-green"),
+        "syntaxNumber":           same("rainbow-orange"),
+        "syntaxType":             same("rainbow-bluelight"),
+        "syntaxOperator":         same("level4"),
+        "syntaxPunctuation":      same("level3"),
+    }
+
+    return {
+        "$schema": "https://opencode.ai/theme.json",
+        "defs": defs,
+        "theme": theme,
+    }
+
+
+def generate_opencode(light_p, dark_p, output_dir):
+    out = os.path.join(output_dir, "opencode")
+    os.makedirs(out, exist_ok=True)
+    _write_json(os.path.join(out, "nibelung.json"), _opencode_theme(light_p, dark_p))
+    print(f"OpenCode: wrote {out}")
+
+
+# ---------------------------------------------------------------------------
 # Smoke tests
 # ---------------------------------------------------------------------------
 
@@ -861,6 +945,20 @@ def run_smoke_tests(dist):
 
     print("Smoke tests passed")
 
+    # OpenCode
+    with open(f"{dist}/opencode/nibelung.json") as f:
+        opencode = json.load(f)
+    assert opencode["$schema"] == "https://opencode.ai/theme.json", \
+        f"OpenCode schema: {opencode['$schema']!r}"
+    assert opencode["defs"]["l-bg"] == "#F8F9FA", \
+        f"OpenCode defs l-bg: {opencode['defs']['l-bg']!r}"
+    assert opencode["defs"]["d-bg"] == "#212529", \
+        f"OpenCode defs d-bg: {opencode['defs']['d-bg']!r}"
+    assert opencode["theme"]["primary"]["dark"] == "d-accent-match", \
+        f"OpenCode primary dark: {opencode['theme']['primary']['dark']!r}"
+    assert opencode["theme"]["syntaxKeyword"]["light"] == "l-accent-match", \
+        f"OpenCode syntaxKeyword light: {opencode['theme']['syntaxKeyword']['light']!r}"
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -878,13 +976,13 @@ def _write_json(path, data):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate nibelung themes for VSCode, Neovim, IntelliJ, Alacritty, and Caelestia")
+        description="Generate nibelung themes for VSCode, Neovim, IntelliJ, Alacritty, Caelestia, and OpenCode")
     parser.add_argument("--emacs",      default="emacs",
                         help="Path to Emacs binary (default: emacs)")
     parser.add_argument("--output-dir", default="dist",
                         help="Output directory (default: dist)")
     parser.add_argument("--target",     default="all",
-                        choices=["vscode", "neovim", "intellij", "alacritty", "caelestia", "all"],
+                        choices=["vscode", "neovim", "intellij", "alacritty", "caelestia", "opencode", "all"],
                         help="Which backend to generate (default: all)")
     parser.add_argument("--smoke-test", metavar="DIST_DIR",
                         help="Run smoke tests against generated files in DIST_DIR")
@@ -902,6 +1000,7 @@ def main():
         "intellij":   generate_intellij,
         "alacritty":  generate_alacritty,
         "caelestia":  generate_caelestia,
+        "opencode":   generate_opencode,
     }
 
     targets = list(generators.keys()) if args.target == "all" else [args.target]
