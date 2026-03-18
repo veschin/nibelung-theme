@@ -86,5 +86,12 @@ Then add to ~alacritty.toml~ under ~[general]~: ~import = ["~/.config/alacritty/
 cp dist/caelestia/nibelung-dark-scheme.json ~/.local/state/caelestia/scheme.json
 #+end_src
 For the light variant, use ~nibelung-scheme.json~ instead. Caelestia hot-reloads the scheme automatically.
+** OpenCode
+#+begin_src sh
+mkdir -p ~/.config/opencode/themes && \
+  curl -o ~/.config/opencode/themes/nibelung.json \
+  https://raw.githubusercontent.com/veschin/nibelung-theme/main/dist/opencode/nibelung.json
+#+end_src
+Then in ~tui.json~: ~"theme": "nibelung"~, or use the ~/theme~ command inside OpenCode. Includes both light and dark variants — OpenCode selects automatically based on your terminal.
 * Preview
 [[nibelung_preview.gif]]
