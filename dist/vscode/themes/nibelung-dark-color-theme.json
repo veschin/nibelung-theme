@@ -68,7 +68,7 @@
   "name": "Nibelung Dark",
   "semanticTokenColors": {
     "function.declaration": {
-      "foreground": "#6C757D"
+      "foreground": "#495057"
     },
     "function.defaultLibrary": {
       "foreground": "#9BB1FF"
@@ -86,7 +86,7 @@
       "scope": "comment.block.documentation",
       "settings": {
         "fontStyle": "",
-        "foreground": "#6C757D"
+        "foreground": "#495057"
       }
     },
     {
@@ -107,7 +107,7 @@
       "scope": "string, string.quoted.single, string.quoted.double",
       "settings": {
         "fontStyle": "",
-        "foreground": "#6C757D"
+        "foreground": "#495057"
       }
     },
     {
@@ -128,7 +128,7 @@
       "scope": "entity.name.function.definition",
       "settings": {
         "fontStyle": "",
-        "foreground": "#6C757D"
+        "foreground": "#495057"
       }
     },
     {
@@ -149,7 +149,7 @@
       "scope": "variable.parameter",
       "settings": {
         "fontStyle": "",
-        "foreground": "#6C757D"
+        "foreground": "#495057"
       }
     },
     {
@@ -163,7 +163,7 @@
       "scope": "variable.other.property",
       "settings": {
         "fontStyle": "",
-        "foreground": "#6C757D"
+        "foreground": "#495057"
       }
     },
     {
