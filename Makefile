@@ -78,3 +78,33 @@ test-export: export
 	@python3 -m json.tool dist/caelestia/nibelung-dark-scheme.json > /dev/null
 	@python3 export/generate.py --smoke-test dist
 	@echo "All export validations passed"
+
+.PHONY: install install-alacritty install-caelestia install-telegram
+
+install: install-alacritty install-caelestia install-telegram
+
+install-alacritty: export
+	@echo "=== Installing Alacritty themes ==="
+	cp dist/alacritty/nibelung.toml ~/.config/alacritty/nibelung.toml
+	cp dist/alacritty/nibelung-dark.toml ~/.config/alacritty/nibelung-dark.toml
+	@echo "Alacritty: installed to ~/.config/alacritty/"
+
+install-caelestia: export
+	@echo "=== Installing Caelestia schemes ==="
+	@DEST=$$(python3 -c "import caelestia, os; print(os.path.join(os.path.dirname(caelestia.__file__), 'data', 'schemes'))"); \
+	sudo mkdir -p "$$DEST/nibelung/default" && \
+	sudo cp dist/caelestia/default/light.txt "$$DEST/nibelung/default/light.txt" && \
+	sudo cp dist/caelestia/default/dark.txt "$$DEST/nibelung/default/dark.txt" && \
+	echo "Caelestia: installed to $$DEST/nibelung/"
+
+TELEGRAM_THEMES_DIR = $(HOME)/.local/share/nibelung-theme/telegram
+
+install-telegram: export
+	@echo "=== Installing Telegram themes ==="
+	@mkdir -p $(TELEGRAM_THEMES_DIR)
+	cp dist/telegram/nibelung.tdesktop-palette $(TELEGRAM_THEMES_DIR)/
+	cp dist/telegram/nibelung-dark.tdesktop-palette $(TELEGRAM_THEMES_DIR)/
+	@echo "Telegram: copied to $(TELEGRAM_THEMES_DIR)/"
+	@echo "  Apply: Telegram > Settings > Chat Settings > Choose from file"
+	@echo "  Light: $(TELEGRAM_THEMES_DIR)/nibelung.tdesktop-palette"
+	@echo "  Dark:  $(TELEGRAM_THEMES_DIR)/nibelung-dark.tdesktop-palette"

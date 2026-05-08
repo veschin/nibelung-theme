@@ -9,28 +9,45 @@ Nibelung Theme is a minimalist Emacs color scheme blending cool gray tones and s
 - Developers working for hours: soft contrasts reduce eye strain
 - ~Nord~ and ~gruvbox~ enthusiasts ready for a more "airy" alternative
 * Features
+- Light and dark variants from a single palette
 - Comments become first-class citizens, not afterthoughts
-- Great package support
-  + Magit
-  + Dired and Dired with git comments
-  + Company
-  + Doom Nano Modeline
-  + Modeline
-  + Matching
-  + Org Mode
-  + Rainbow delimiters
+- 40+ packages with explicit face definitions
+  + Completion: Company, Corfu
+  + Navigation: Vertico, Consult, Avy, Which-key
+  + Git: Magit, Diff-HL, Git Gutter
+  + Files: Dired, Diredfl, Dirvish, Treemacs
+  + LSP: Eglot (with semantic tokens), LSP-UI
+  + Syntax: Tree-sitter, Flycheck, Flymake
+  + Org Mode, Markdown
+  + Modeline: Doom Modeline, Doom Nano Modeline
+  + Evil: Evil Goggles, Evil Snipe
+  + Debug: Dape, Cider, EJC
+  + UI: Hydra, Transient, Rainbow Delimiters, Solaire
+* Preview
+[[nibelung_preview.gif]]
 * Installation
+#+begin_quote
+All non-Emacs themes are generated from the Emacs palette via ~make export~. Light and dark variants included everywhere.
+#+end_quote
+** Table of Contents
+- [[#emacs][Emacs]] (straight, Doom, package.el)
+- [[#vscode][VSCode]]
+- [[#neovim][Neovim]]
+- [[#intellij-idea][IntelliJ IDEA]]
+- [[#alacritty][Alacritty]]
+- [[#telegram-desktop][Telegram Desktop]]
+- [[#caelestia--quickshell][Caelestia / Quickshell]]
+- [[#opencode][OpenCode]]
 ** Emacs
+*** straight.el
 #+begin_src emacs-lisp
-;; init.el
 (straight-use-package
  '(nibelung-theme :type git :host github :repo "veschin/nibelung-theme"
                   :files ("*.el")))
-(load-theme 'nibelung t)
-;; or
-(load-theme 'nibelung-dark t)
+(load-theme 'nibelung t)      ; light
+(load-theme 'nibelung-dark t) ; dark
 #+end_src
-** Doom Emacs
+*** Doom Emacs
 #+begin_src emacs-lisp
 ;; packages.el
 (package! nibelung-theme
@@ -38,60 +55,77 @@ Nibelung Theme is a minimalist Emacs color scheme blending cool gray tones and s
            :repo "veschin/nibelung-theme"
            :files ("*.el")))
 ;; config.el
-(setq doom-theme 'nibelung)
-;; or
-(setq doom-theme 'nibelung-dark)
+(setq doom-theme 'nibelung)      ; light
+(setq doom-theme 'nibelung-dark) ; dark
 #+end_src
-** package.el
-#+begin_src emacs-lisp 
+*** package.el
+#+begin_src emacs-lisp
 (use-package nibelung-theme
   :vc ( :url "https://github.com/veschin/nibelung-theme"
 	:rev :newest)
   :ensure t
   :config
-  (load-theme 'nibelung t)
-  ;; or
-  (load-theme 'nibelung-dark t))
+  (load-theme 'nibelung t))
 #+end_src
-** Warning
+*** Warning
 U should disable any other theme
-* Other Editors
-Themes for VSCode, Neovim, IntelliJ IDEA, and Alacritty are generated from the same palette. Find them in the ~dist/~ directory.
 ** VSCode
 #+begin_src sh
 git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
   cp -r /tmp/nibelung/dist/vscode ~/.vscode/extensions/nibelung-theme
 #+end_src
-Then: ~Ctrl+K Ctrl+T~ → select "Nibelung" or "Nibelung Dark"
+~Ctrl+K Ctrl+T~ -> select "Nibelung" or "Nibelung Dark"
 ** Neovim
 #+begin_src sh
 git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
   mkdir -p ~/.config/nvim/colors && \
   cp /tmp/nibelung/dist/neovim/colors/*.lua ~/.config/nvim/colors/
 #+end_src
-Then in ~init.lua~: ~vim.cmd("colorscheme nibelung")~ or ~vim.cmd("colorscheme nibelung-dark")~
+#+begin_src lua
+-- init.lua
+vim.cmd("colorscheme nibelung")      -- light
+vim.cmd("colorscheme nibelung-dark") -- dark
+#+end_src
 ** IntelliJ IDEA
 #+begin_src sh
-cp dist/intellij/*.icls ~/.config/JetBrains/*/colors/
+git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
+  cp /tmp/nibelung/dist/intellij/*.icls ~/.config/JetBrains/*/colors/
 #+end_src
-Then: Settings → Editor → Color Scheme → select "Nibelung" or "Nibelung Dark"
+Settings -> Editor -> Color Scheme -> select "Nibelung" or "Nibelung Dark"
 ** Alacritty
 #+begin_src sh
 curl -o ~/.config/alacritty/nibelung.toml \
   https://raw.githubusercontent.com/veschin/nibelung-theme/main/dist/alacritty/nibelung.toml
+curl -o ~/.config/alacritty/nibelung-dark.toml \
+  https://raw.githubusercontent.com/veschin/nibelung-theme/main/dist/alacritty/nibelung-dark.toml
 #+end_src
-Then add to ~alacritty.toml~ under ~[general]~: ~import = ["~/.config/alacritty/nibelung.toml"]~
+#+begin_src toml
+# alacritty.toml
+[general]
+import = ["~/.config/alacritty/nibelung.toml"]      # light
+import = ["~/.config/alacritty/nibelung-dark.toml"]  # dark
+#+end_src
+** Telegram Desktop
+#+begin_src sh
+git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
+  cp /tmp/nibelung/dist/telegram/*.tdesktop-palette ~/
+#+end_src
+Send the ~.tdesktop-palette~ file to Saved Messages in Telegram, then tap to apply. Apply light in day mode, dark in night mode -- Telegram auto-switches.
 ** Caelestia / Quickshell
 #+begin_src sh
-cp dist/caelestia/nibelung-dark-scheme.json ~/.local/state/caelestia/scheme.json
+git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
+  cp /tmp/nibelung/dist/caelestia/nibelung-dark-scheme.json \
+  ~/.local/state/caelestia/scheme.json
 #+end_src
-For the light variant, use ~nibelung-scheme.json~ instead. Caelestia hot-reloads the scheme automatically.
+For light variant use ~nibelung-scheme.json~. Caelestia hot-reloads the scheme.
 ** OpenCode
 #+begin_src sh
 mkdir -p ~/.config/opencode/themes && \
   curl -o ~/.config/opencode/themes/nibelung.json \
   https://raw.githubusercontent.com/veschin/nibelung-theme/main/dist/opencode/nibelung.json
 #+end_src
-Then in ~tui.json~: ~"theme": "nibelung"~, or use the ~/theme~ command inside OpenCode. Includes both light and dark variants — OpenCode selects automatically based on your terminal.
-* Preview
-[[nibelung_preview.gif]]
+#+begin_src json
+// tui.json
+{ "theme": "nibelung" }
+#+end_src
+Both light and dark variants included. OpenCode selects based on terminal background.

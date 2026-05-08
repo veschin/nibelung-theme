@@ -180,10 +180,22 @@
      `(flymake-error ((t (:inherit default :extend t :background ,level5 :foreground ,level0))))
      `(flymake-warning ((t (:inherit default :underline (:color ,level4 :style line :position t)))))
      `(flymake-note ((t (:inherit default :underline (:color ,emphasis :style line :position t)))))
-     `(flymake-error-echo ((t (:foreground ,level5))))
-     `(flymake-warning-echo ((t (:foreground ,level4))))
+     `(flymake-error-echo ((t (:foreground ,rainbow-red))))
+     `(flymake-warning-echo ((t (:foreground ,rainbow-orange))))
      `(flymake-note-echo ((t (:foreground ,emphasis))))
      `(flymake-popon ((t (:background ,level0 :foreground ,fg))))
+     ;; Flymake end-of-line diagnostics
+     `(flymake-end-of-line-diagnostics-face ((t (:height 0.85))))
+     `(flymake-error-echo-at-eol ((t (:inherit flymake-end-of-line-diagnostics-face :foreground ,rainbow-red))))
+     `(flymake-warning-echo-at-eol ((t (:inherit flymake-end-of-line-diagnostics-face :foreground ,rainbow-orange))))
+     `(flymake-note-echo-at-eol ((t (:inherit flymake-end-of-line-diagnostics-face :foreground ,emphasis))))
+     `(flymake-eol-information-face ((t (:inherit flymake-end-of-line-diagnostics-face :slant italic :foreground ,level3))))
+     ;; Flymake fringe indicators
+     `(flymake-error-fringe ((t (:foreground ,rainbow-red))))
+     `(flymake-warning-fringe ((t (:foreground ,rainbow-orange))))
+     `(flymake-note-fringe ((t (:foreground ,emphasis))))
+     ;; Flymake popon border
+     `(flymake-popon-posframe-border ((t (:foreground ,level2))))
      ;; Modeline
      `(doom-nano-modeline-evil-insert-state-face ,modeline-indicator)
      `(doom-nano-modeline-evil-motion-state-face ,modeline-indicator)
@@ -318,7 +330,7 @@
      `(dirvish-file-user-id ,optional)
      `(dirvish-free-space ,optional)
      `(dirvish-git-commit-message-face ,optional)
-     `(dirvish-hl-line ((t (:inherit default))))
+     `(dirvish-hl-line ((t (:inherit default :background ,level1 :extend t))))
      `(dirvish-hl-line-inactive ((t (:inherit default :foreground ,level2))))
      `(dirvish-inactive ,optional)
      `(dirvish-media-info-heading ,code-block-header)
@@ -560,7 +572,7 @@
      `(eglot-mode-line ((t (:foreground ,level4))))
      `(eglot-parameter-hint-face ((t (:foreground ,level3))))
      `(eglot-type-hint-face ((t (:foreground ,level3))))
-     ;; Eglot semantic tokens — types
+     ;; Eglot semantic tokens - types
      `(eglot-semantic-class ,builtin)
      `(eglot-semantic-enum ,builtin)
      `(eglot-semantic-interface ,builtin)
@@ -568,18 +580,18 @@
      `(eglot-semantic-struct ,builtin)
      `(eglot-semantic-type ,builtin)
      `(eglot-semantic-typeParameter ,builtin)
-     ;; Eglot semantic tokens — callables
+     ;; Eglot semantic tokens - callables
      `(eglot-semantic-function ,bold)
      `(eglot-semantic-method ,bold)
      `(eglot-semantic-macro ,constant)
      `(eglot-semantic-decorator ,constant)
-     ;; Eglot semantic tokens — values
+     ;; Eglot semantic tokens - values
      `(eglot-semantic-variable ,builtin)
      `(eglot-semantic-parameter ,optional)
      `(eglot-semantic-property ,optional)
      `(eglot-semantic-enumMember ,constant)
      `(eglot-semantic-event ,bold)
-     ;; Eglot semantic tokens — literals/text
+     ;; Eglot semantic tokens - literals/text
      `(eglot-semantic-number ,constant)
      `(eglot-semantic-string ,optional)
      `(eglot-semantic-regexp ,constant)
@@ -587,7 +599,7 @@
      `(eglot-semantic-operator ,optional)
      `(eglot-semantic-comment ,comment)
      `(eglot-semantic-documentation ,optional)
-     ;; Eglot semantic tokens — modifiers (additive, minimal)
+     ;; Eglot semantic tokens - modifiers (additive, minimal)
      `(eglot-semantic-abstract ((t nil)))
      `(eglot-semantic-async ((t nil)))
      `(eglot-semantic-declaration ((t nil)))
@@ -627,7 +639,7 @@
      `(diff-hl-dired-ignored ((t (:foreground ,level2))))
 
      ;; Vertico
-     `(vertico-current ((t (:foreground ,emphasis))))
+     `(vertico-current ((t (:background ,level1 :foreground ,emphasis :extend t))))
      `(vertico-group-title ((t (:foreground ,level4))))
      `(vertico-group-separator ((t (:foreground ,level2))))
      `(vertico-multiline ,default)

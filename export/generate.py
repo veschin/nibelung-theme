@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Nibelung theme generator — exports palettes from Emacs and generates themes
+"""Nibelung theme generator -- exports palettes from Emacs and generates themes
 for VSCode, Neovim, IntelliJ IDEA, Alacritty, and Caelestia/Quickshell."""
 
 import argparse
@@ -46,9 +46,8 @@ def roles(p):
         "comment":  p["level3"],
         "constant": p["level4"],
         "function": p["level5"],
-        "optional": p["level3"],
+        "optional": p["level2"],
         "quiet":    p["level2"],
-        "symbol":   p["level5"],
     }
 
 
@@ -552,7 +551,6 @@ def generate_intellij(light_p, dark_p, output_dir):
 # ---------------------------------------------------------------------------
 
 def _alacritty_theme(p, a, title):
-    # Alacritty-specific overrides for terminal readability
     al_bg = p["level0"]
     al_cyan = p["accent-bright"]
     al_blue = "#8384DD"
@@ -637,10 +635,11 @@ def generate_alacritty(light_p, dark_p, output_dir):
 # Caelestia backend
 # ---------------------------------------------------------------------------
 
-def _caelestia_scheme(p, a, variant_name):
+def _caelestia_scheme(p, a, variant_name, light_p=None):
     def m3(c): return c[1:].lower()
 
     is_dark = (variant_name == "dark")
+    lp = light_p if light_p else p  # light palette for Fixed colors (M3: constant across modes)
 
     colours = {
         "primary_paletteKeyColor": m3(p["emphasis"]),
@@ -667,7 +666,7 @@ def _caelestia_scheme(p, a, variant_name):
         "surfaceTint": m3(p["emphasis"]),
 
         "primary": m3(p["emphasis"]),
-        "onPrimary": "212529",
+        "onPrimary": m3(lp["level6"]),
         "primaryContainer": m3(_blend(p["emphasis"], p["bg"], 0.5)),
         "onPrimaryContainer": m3(p["fg"]),
         "inversePrimary": m3(p["accent-light"]),
@@ -678,35 +677,35 @@ def _caelestia_scheme(p, a, variant_name):
         "onSecondaryContainer": m3(p["fg"]),
 
         "tertiary": m3(p["rainbow-magenta"]),
-        "onTertiary": "212529",
+        "onTertiary": m3(lp["level6"]),
         "tertiaryContainer": m3(_blend(p["rainbow-magenta"], p["bg"], 0.7)),
         "onTertiaryContainer": m3(p["fg"]),
 
         "error": m3(p["rainbow-red"]),
-        "onError": "212529",
+        "onError": m3(lp["level6"]),
         "errorContainer": m3(_blend(p["rainbow-red"], p["bg"], 0.7)),
         "onErrorContainer": m3(p["fg"]),
 
         "success": m3(p["rainbow-green"]),
-        "onSuccess": "212529",
+        "onSuccess": m3(lp["level6"]),
         "successContainer": m3(_blend(p["rainbow-green"], p["bg"], 0.7)),
         "onSuccessContainer": m3(p["fg"]),
 
-        # Fixed colors — constant across light/dark (derived from light palette anchors)
-        "primaryFixed": m3(_blend("#9BB1FF", "#F8F9FA", 0.7)),
-        "primaryFixedDim": "9bb1ff",
-        "onPrimaryFixed": "212529",
-        "onPrimaryFixedVariant": "495057",
+        # Fixed colors (M3: constant across light/dark, always derived from light palette)
+        "primaryFixed": m3(_blend(lp["emphasis"], lp["bg"], 0.7)),
+        "primaryFixedDim": m3(lp["emphasis"]),
+        "onPrimaryFixed": m3(lp["level6"]),
+        "onPrimaryFixedVariant": m3(lp["level2"]),
 
-        "secondaryFixed": m3(_blend("#ADB5BD", "#F8F9FA", 0.6)),
-        "secondaryFixedDim": "adb5bd",
-        "onSecondaryFixed": "212529",
-        "onSecondaryFixedVariant": "495057",
+        "secondaryFixed": m3(_blend(lp["level3"], lp["bg"], 0.6)),
+        "secondaryFixedDim": m3(lp["level3"]),
+        "onSecondaryFixed": m3(lp["level6"]),
+        "onSecondaryFixedVariant": m3(lp["level2"]),
 
-        "tertiaryFixed": m3(_blend("#C99BC9", "#F8F9FA", 0.7)),
-        "tertiaryFixedDim": "c99bc9",
-        "onTertiaryFixed": "212529",
-        "onTertiaryFixedVariant": "495057",
+        "tertiaryFixed": m3(_blend(lp["rainbow-magenta"], lp["bg"], 0.7)),
+        "tertiaryFixedDim": m3(lp["rainbow-magenta"]),
+        "onTertiaryFixed": m3(lp["level6"]),
+        "onTertiaryFixedVariant": m3(lp["level2"]),
 
         "outline": m3(p["level3"]),
         "outlineVariant": m3(p["level1"]),
@@ -787,8 +786,17 @@ def generate_caelestia(light_p, dark_p, output_dir):
     light_scheme = _caelestia_scheme(light_p, ansi(light_p), "light")
     _write_json(os.path.join(out, "nibelung-scheme.json"), light_scheme)
 
-    dark_scheme = _caelestia_scheme(dark_p, ansi(dark_p), "dark")
+    dark_scheme = _caelestia_scheme(dark_p, ansi(dark_p), "dark", light_p=light_p)
     _write_json(os.path.join(out, "nibelung-dark-scheme.json"), dark_scheme)
+
+    # Also write .txt format for installation into caelestia scheme directory
+    for scheme, mode in [(light_scheme, "light"), (dark_scheme, "dark")]:
+        txt_dir = os.path.join(out, "default")
+        os.makedirs(txt_dir, exist_ok=True)
+        txt_path = os.path.join(txt_dir, f"{mode}.txt")
+        with open(txt_path, "w") as f:
+            for key, value in scheme["colours"].items():
+                f.write(f"{key} {value}\n")
 
     print(f"Caelestia: wrote {out}")
 
@@ -878,6 +886,437 @@ def generate_opencode(light_p, dark_p, output_dir):
 
 
 # ---------------------------------------------------------------------------
+# Telegram Desktop backend
+# ---------------------------------------------------------------------------
+
+def _telegram_palette(p, variant):
+    """Generate a .tdesktop-palette text for Telegram Desktop.
+
+    Undefined entries fall back to Telegram's built-in defaults, so the output
+    only covers the variables whose mapping to the nibelung palette is meaningful.
+    """
+    is_dark = (variant == "dark")
+    active_fg = p["level1"] if is_dark else p["level6"]
+
+    # Dark mode: emphasis is foreground accent, not background fill.
+    # Large areas (bubbles, selected rows, folders) use neutral grays.
+    msg_out_bg = _blend(p["level1"], p["accent-subtle"], 0.15) if is_dark else p["accent-subtle"]
+    msg_out_bg_sel = _blend(p["level1"], p["accent-subtle"], 0.35) if is_dark else p["accent-light"]
+    sel_bg = p["level2"] if is_dark else p["emphasis"]
+    sel_fg = p["level6"] if is_dark else active_fg
+    sel_secondary = p["level4"] if is_dark else active_fg
+    sel_accent = p["emphasis"] if is_dark else active_fg
+
+    lines = []
+
+    def entry(name, value):
+        lines.append(f"{name}: {value};")
+
+    # Window base
+    entry("windowBg",               p["bg"])
+    entry("windowFg",               p["fg"])
+    entry("windowBgOver",           p["level0"])
+    entry("windowBgRipple",         p["level1"])
+    entry("windowFgOver",           "windowFg")
+    entry("windowSubTextFg",        p["level3"])
+    entry("windowSubTextFgOver",    p["level4"])
+    entry("windowBoldFg",           p["level5"])
+    entry("windowBoldFgOver",       p["level6"])
+    entry("windowBgActive",         p["emphasis"])
+    entry("windowFgActive",         active_fg)
+    entry("windowActiveTextFg",     p["link"])
+    entry("windowShadowFg",         "#000000")
+    entry("windowShadowFgFallback", p["level0"])
+    entry("shadowFg",               "#00000028")
+
+    # Buttons
+    entry("activeButtonBg",              "windowBgActive")
+    entry("activeButtonBgOver",          p["accent-bright"])
+    entry("activeButtonBgRipple",        p["accent-match"])
+    entry("activeButtonFg",              "windowFgActive")
+    entry("activeButtonFgOver",          "activeButtonFg")
+    entry("activeButtonSecondaryFg",     p["accent-subtle"])
+    entry("activeButtonSecondaryFgOver", "activeButtonSecondaryFg")
+    entry("activeLineFg",                p["emphasis"])
+    entry("activeLineFgError",           p["rainbow-red"])
+
+    entry("lightButtonBg",       "windowBg")
+    entry("lightButtonBgOver",   p["level0"])
+    entry("lightButtonBgRipple", p["level1"])
+    entry("lightButtonFg",       "windowActiveTextFg")
+    entry("lightButtonFgOver",   "lightButtonFg")
+
+    entry("attentionButtonFg",       p["rainbow-red"])
+    entry("attentionButtonFgOver",   "attentionButtonFg")
+    entry("attentionButtonBgOver",   p["level0"])
+    entry("attentionButtonBgRipple", p["level1"])
+
+    entry("outlineButtonBg",        "windowBg")
+    entry("outlineButtonBgOver",    p["level0"])
+    entry("outlineButtonOutlineFg", p["emphasis"])
+    entry("outlineButtonBgRipple",  p["level1"])
+
+    # Popup menu
+    entry("menuBg",             "windowBg")
+    entry("menuBgOver",         "windowBgOver")
+    entry("menuBgRipple",       "windowBgRipple")
+    entry("menuIconFg",         p["level3"])
+    entry("menuIconFgOver",     p["level4"])
+    entry("menuSubmenuArrowFg", p["level5"])
+    entry("menuFgDisabled",     p["level2"])
+    entry("menuSeparatorFg",    p["level1"])
+
+    # Scrollbars
+    entry("scrollBarBg",     p["level3"] + "80")
+    entry("scrollBarBgOver", p["level4"] + "80")
+    entry("scrollBg",        p["level1"] + "80")
+    entry("scrollBgOver",    p["level2"] + "80")
+
+    entry("smallCloseIconFg",     p["level3"])
+    entry("smallCloseIconFgOver", p["level4"])
+
+    entry("radialFg", "windowFgActive")
+    entry("radialBg", "#00000056")
+
+    # Inputs
+    entry("placeholderFg",         "windowSubTextFg")
+    entry("placeholderFgActive",   p["level3"])
+    entry("inputBorderFg",         p["level1"])
+    entry("filterInputBorderFg",   p["emphasis"])
+    entry("filterInputActiveBg",   "windowBg")
+    entry("filterInputInactiveBg", "windowBgOver")
+
+    entry("checkboxFg",       p["level3"])
+    entry("botKbBg",          "menuBgOver")
+    entry("botKbDownBg",      "menuBgRipple")
+    entry("botKbColor",       "windowBoldFgOver")
+    entry("sliderBgInactive", p["level2"])
+    entry("sliderBgActive",   "windowBgActive")
+
+    # Tooltip
+    entry("tooltipBg",       p["level0"])
+    entry("tooltipFg",       p["fg"])
+    entry("tooltipBorderFg", p["level1"])
+
+    # Window title (Windows only, but declare anyway)
+    entry("titleShadow",                  "#00000010")
+    entry("titleBg",                      "windowBgOver")
+    entry("titleBgActive",                "titleBg")
+    entry("titleButtonBg",                "titleBg")
+    entry("titleButtonFg",                p["level3"])
+    entry("titleButtonBgOver",            p["level1"])
+    entry("titleButtonFgOver",            p["level4"])
+    entry("titleButtonBgActive",          "titleButtonBg")
+    entry("titleButtonFgActive",          "titleButtonFg")
+    entry("titleButtonBgActiveOver",      "titleButtonBgOver")
+    entry("titleButtonFgActiveOver",      "titleButtonFgOver")
+    entry("titleButtonCloseBg",           "titleButtonBg")
+    entry("titleButtonCloseFg",           "titleButtonFg")
+    entry("titleButtonCloseBgOver",       p["rainbow-red"])
+    entry("titleButtonCloseFgOver",       active_fg)
+    entry("titleButtonCloseBgActive",     "titleButtonCloseBg")
+    entry("titleButtonCloseFgActive",     "titleButtonCloseFg")
+    entry("titleButtonCloseBgActiveOver", "titleButtonCloseBgOver")
+    entry("titleButtonCloseFgActiveOver", "titleButtonCloseFgOver")
+    entry("titleFgActive",                p["level5"])
+    entry("titleFg",                      p["level4"])
+
+    entry("trackFg",       p["level2"])
+    entry("trackFgActive", p["emphasis"])
+    entry("trackFgOver",   p["level3"])
+
+    # Dialog list (left panel)
+    entry("dialogsMenuIconFg",     p["level3"])
+    entry("dialogsMenuIconFgOver", p["level4"])
+    entry("dialogsBg",             "windowBg")
+    entry("dialogsNameFg",         p["level6"])
+    entry("dialogsChatIconFg",     p["level3"])
+    entry("dialogsDateFg",         p["level3"])
+    entry("dialogsTextFg",         p["level4"])
+    entry("dialogsTextFgService",  "windowActiveTextFg")
+    entry("dialogsDraftFg",        p["rainbow-red"])
+    entry("dialogsVerifiedIconBg", "windowBgActive")
+    entry("dialogsVerifiedIconFg", "windowFgActive")
+    entry("dialogsSendingIconFg",  p["level3"])
+    entry("dialogsSentIconFg",     p["emphasis"])
+    entry("dialogsUnreadBg",       p["emphasis"])
+    entry("dialogsUnreadBgMuted",  p["level3"])
+    entry("dialogsUnreadFg",       active_fg)
+
+    entry("dialogsBgOver",             p["level0"])
+    entry("dialogsNameFgOver",         "dialogsNameFg")
+    entry("dialogsChatIconFgOver",     "dialogsChatIconFg")
+    entry("dialogsDateFgOver",         "dialogsDateFg")
+    entry("dialogsTextFgOver",         "dialogsTextFg")
+    entry("dialogsTextFgServiceOver",  "dialogsTextFgService")
+    entry("dialogsDraftFgOver",        "dialogsDraftFg")
+    entry("dialogsVerifiedIconBgOver", "dialogsVerifiedIconBg")
+    entry("dialogsVerifiedIconFgOver", "dialogsVerifiedIconFg")
+    entry("dialogsSendingIconFgOver",  "dialogsSendingIconFg")
+    entry("dialogsSentIconFgOver",     "dialogsSentIconFg")
+    entry("dialogsUnreadBgOver",       "dialogsUnreadBg")
+    entry("dialogsUnreadBgMutedOver",  "dialogsUnreadBgMuted")
+    entry("dialogsUnreadFgOver",       "dialogsUnreadFg")
+
+    entry("dialogsBgActive",             sel_bg)
+    entry("dialogsNameFgActive",         sel_fg)
+    entry("dialogsChatIconFgActive",     sel_fg if not is_dark else p["level5"])
+    entry("dialogsDateFgActive",         sel_secondary)
+    entry("dialogsTextFgActive",         sel_secondary)
+    entry("dialogsTextFgServiceActive",  sel_accent)
+    entry("dialogsDraftFgActive",        p["rainbow-red"] if is_dark else active_fg)
+    entry("dialogsVerifiedIconBgActive", sel_accent)
+    entry("dialogsVerifiedIconFgActive", sel_bg if is_dark else p["emphasis"])
+    entry("dialogsSendingIconFgActive",  sel_secondary)
+    entry("dialogsSentIconFgActive",     sel_accent)
+    entry("dialogsUnreadBgActive",       p["emphasis"] if is_dark else active_fg)
+    entry("dialogsUnreadBgMutedActive",  p["level3"] if is_dark else p["level2"])
+    entry("dialogsUnreadFgActive",       active_fg if is_dark else p["emphasis"])
+
+    entry("dialogsRippleBg",       p["level1"])
+    entry("dialogsRippleBgActive", p["level3"] if is_dark else p["accent-match"])
+    entry("dialogsForwardBg",      "dialogsBgActive")
+    entry("dialogsForwardFg",      "dialogsNameFgActive")
+
+    entry("searchedBarBg",     p["level0"])
+    entry("searchedBarBorder", p["level1"])
+    entry("searchedBarFg",     p["level4"])
+
+    # History / chat area
+    entry("historyTextInFg",          p["fg"])
+    entry("historyTextInFgSelected",  p["fg"])
+    entry("historyTextOutFg",         p["fg"])
+    entry("historyTextOutFgSelected", p["fg"])
+    entry("historyCaretFg",           p["fg"])
+    entry("historyLinkInFg",          p["link"])
+    entry("historyLinkInFgSelected",  p["link"])
+    entry("historyLinkOutFg",         p["link"])
+    entry("historyLinkOutFgSelected", p["link"])
+    entry("historyFileNameInFg",      p["fg"])
+    entry("historyFileNameOutFg",     p["fg"])
+    entry("historyOutIconFg",         p["emphasis"])
+    entry("historyOutIconFgSelected", p["emphasis"])
+    entry("historyIconFgInverted",    p["level6"] if is_dark else "windowBg")
+    entry("historyCallArrowInFg",     p["rainbow-green"])
+    entry("historyCallArrowMissedInFg", p["rainbow-red"])
+    entry("historyCallArrowOutFg",    p["rainbow-green"])
+    entry("historyUnreadBarBg",       p["level0"])
+    entry("historyUnreadBarBorder",   p["level1"])
+    entry("historyUnreadBarFg",       p["level4"])
+
+    # Peer colors (8 rotating, used for avatars and names)
+    entry("historyPeer1NameFg",    p["rainbow-red"])
+    entry("historyPeer1UserpicBg", p["rainbow-red"])
+    entry("historyPeer2NameFg",    p["rainbow-green"])
+    entry("historyPeer2UserpicBg", p["rainbow-green"])
+    entry("historyPeer3NameFg",    p["rainbow-yellow"])
+    entry("historyPeer3UserpicBg", p["rainbow-yellow"])
+    entry("historyPeer4NameFg",    p["rainbow-blue"])
+    entry("historyPeer4UserpicBg", p["rainbow-blue"])
+    entry("historyPeer5NameFg",    p["rainbow-orange"])
+    entry("historyPeer5UserpicBg", p["rainbow-orange"])
+    entry("historyPeer6NameFg",    p["rainbow-cyan"])
+    entry("historyPeer6UserpicBg", p["rainbow-cyan"])
+    entry("historyPeer7NameFg",    p["rainbow-magenta"])
+    entry("historyPeer7UserpicBg", p["rainbow-magenta"])
+    entry("historyPeer8NameFg",    p["rainbow-bluelight"])
+    entry("historyPeer8UserpicBg", p["rainbow-bluelight"])
+    entry("historyPeerArchiveUserpicBg", p["level3"])
+    entry("historyPeerSavedMessagesBg",  p["emphasis"])
+    entry("historyPeerUserpicFg",        p["level6"] if is_dark else active_fg)
+
+    # Message bubbles
+    entry("msgInBg",                 p["level0"])
+    entry("msgInBgSelected",         p["level1"] if is_dark else p["accent-subtle"])
+    entry("msgOutBg",                msg_out_bg)
+    entry("msgOutBgSelected",        msg_out_bg_sel)
+    entry("msgSelectOverlay",        p["emphasis"] + "40")
+    entry("msgStickerOverlay",       p["emphasis"] + "40")
+    entry("msgInServiceFg",          p["emphasis"])
+    entry("msgInServiceFgSelected",  p["emphasis"])
+    entry("msgOutServiceFg",         p["emphasis"])
+    entry("msgOutServiceFgSelected", p["emphasis"])
+    entry("msgInShadow",             p["level1"])
+    entry("msgInShadowSelected",     p["level1"])
+    entry("msgOutShadow",            p["level1"])
+    entry("msgOutShadowSelected",    p["level1"])
+    entry("msgInDateFg",             p["level4"])
+    entry("msgInDateFgSelected",     p["level5"])
+    entry("msgOutDateFg",            p["level4"])
+    entry("msgOutDateFgSelected",    p["level5"])
+    entry("msgServiceFg",            p["fg"] if is_dark else p["level6"])
+    entry("msgServiceBg",            p["level0"])
+    entry("msgServiceBgSelected",    p["level1"])
+    entry("msgInReplyBarColor",      p["emphasis"])
+    entry("msgInReplyBarSelColor",   p["emphasis"])
+    entry("msgOutReplyBarColor",     p["emphasis"])
+    entry("msgOutReplyBarSelColor",  p["emphasis"])
+    entry("msgImgReplyBarColor",     p["level6"] if is_dark else active_fg)
+    entry("msgInMonoFg",             p["rainbow-green"])
+    entry("msgOutMonoFg",            p["rainbow-green"])
+    entry("msgDateImgFg",            p["level6"] if is_dark else active_fg)
+    entry("msgDateImgBg",            "#00000080" if is_dark else p["level6"] + "80")
+    entry("msgDateImgBgOver",        "#000000a0" if is_dark else p["level6"] + "a0")
+    entry("msgDateImgBgSelected",    "#000000a0" if is_dark else p["level6"] + "a0")
+    entry("msgFileThumbLinkInFg",    p["link"])
+    entry("msgFileThumbLinkOutFg",   p["link"])
+    entry("msgFileInBg",             p["emphasis"])
+    entry("msgFileInBgOver",         p["accent-bright"])
+    entry("msgFileInBgSelected",     p["accent-match"])
+    entry("msgFileOutBg",            p["emphasis"])
+    entry("msgFileOutBgOver",        p["accent-bright"])
+    entry("msgFileOutBgSelected",    p["accent-match"])
+    entry("msgFile1Bg",              p["rainbow-blue"])
+    entry("msgFile1BgDark",          p["rainbow-blue"])
+    entry("msgFile1BgOver",          p["rainbow-blue"])
+    entry("msgFile1BgSelected",      p["rainbow-blue"])
+    entry("msgFile2Bg",              p["rainbow-green"])
+    entry("msgFile2BgDark",          p["rainbow-green"])
+    entry("msgFile2BgOver",          p["rainbow-green"])
+    entry("msgFile2BgSelected",      p["rainbow-green"])
+    entry("msgFile3Bg",              p["rainbow-red"])
+    entry("msgFile3BgDark",          p["rainbow-red"])
+    entry("msgFile3BgOver",          p["rainbow-red"])
+    entry("msgFile3BgSelected",      p["rainbow-red"])
+    entry("msgFile4Bg",              p["rainbow-yellow"])
+    entry("msgFile4BgDark",          p["rainbow-yellow"])
+    entry("msgFile4BgOver",          p["rainbow-yellow"])
+    entry("msgFile4BgSelected",      p["rainbow-yellow"])
+    entry("msgWaveformInActive",     p["emphasis"])
+    entry("msgWaveformInInactive",   p["level2"])
+    entry("msgWaveformOutActive",    p["emphasis"])
+    entry("msgWaveformOutInactive",  p["level2"])
+    entry("msgBotKbOverBgAdd",       p["level6"] + "20")
+    entry("msgBotKbIconFg",          p["level6"])
+    entry("msgBotKbRippleBg",        p["level6"] + "10")
+    entry("msgBotKbButtonBg",        p["level0"])
+
+    # Compose area
+    entry("historyComposeAreaBg",         "windowBg")
+    entry("historyComposeAreaFg",         p["fg"])
+    entry("historyComposeAreaFgService",  p["level4"])
+    entry("historyComposeIconFg",         p["level3"])
+    entry("historyComposeIconFgOver",     p["level4"])
+    entry("historySendIconFg",            p["emphasis"])
+    entry("historySendIconFgOver",        p["accent-bright"])
+    entry("historyPinnedBg",              "windowBg")
+    entry("historyReplyBg",               "windowBg")
+    entry("historyReplyIconFg",           p["emphasis"])
+    entry("historyReplyCancelFg",         p["level3"])
+    entry("historyReplyCancelFgOver",     p["level4"])
+    entry("historyComposeButtonBg",       "windowBg")
+    entry("historyComposeButtonBgOver",   p["level0"])
+    entry("historyComposeButtonBgRipple", p["level1"])
+
+    # Overview (media gallery checkmarks)
+    entry("overviewCheckBg",       p["bg"] + "60")
+    entry("overviewCheckFg",       p["level6"] if is_dark else active_fg)
+    entry("overviewCheckFgActive", p["level6"] if is_dark else active_fg)
+    entry("overviewCheckedBg",     p["emphasis"])
+    entry("overviewCheckedFg",     p["level6"] if is_dark else active_fg)
+
+    # Sidebar (folders)
+    entry("sideBarBg",           p["level0"])
+    entry("sideBarBgActive",     sel_bg)
+    entry("sideBarBgRipple",     p["level1"])
+    entry("sideBarTextFg",       p["level4"])
+    entry("sideBarTextFgActive", sel_accent)
+    entry("sideBarIconFg",       p["level3"])
+    entry("sideBarIconFgActive", sel_accent)
+    entry("sideBarBadgeBg",      p["emphasis"])
+    entry("sideBarBadgeBgMuted", p["level3"])
+    entry("sideBarBadgeFg",      active_fg)
+
+    # Intro (login screen)
+    entry("introBg",              "windowBg")
+    entry("introTitleFg",         p["level6"])
+    entry("introDescriptionFg",   p["level4"])
+    entry("introErrorFg",         p["rainbow-red"])
+    entry("introCoverTopBg",      p["emphasis"])
+    entry("introCoverBottomBg",   p["level0"])
+    entry("introCoverIconsFg",    p["level1"])
+    entry("introCoverPlaneTrace", p["level0"])
+    entry("introCoverPlaneInner", p["emphasis"])
+    entry("introCoverPlaneOuter", p["accent-match"])
+    entry("introCoverPlaneIcon",  p["level6"])
+
+    # Box (modal dialogs)
+    entry("boxBg",                     "windowBg")
+    entry("boxTextFg",                 p["fg"])
+    entry("boxTextFgGood",             p["rainbow-green"])
+    entry("boxTextFgError",            p["rainbow-red"])
+    entry("boxTitleFg",                p["level6"])
+    entry("boxSearchBg",               "windowBg")
+    entry("boxSearchCancelIconFg",     p["level3"])
+    entry("boxSearchCancelIconFgOver", p["level4"])
+    entry("boxTitleAdditionalFg",      p["level3"])
+    entry("boxTitleCloseFg",           p["level3"])
+    entry("boxTitleCloseFgOver",       p["level4"])
+    entry("boxPhotoBg",                p["bg"])
+    entry("boxPhotoTextFg",            p["level6"] if is_dark else active_fg)
+    entry("boxPhotoCaptionFg",         p["level4"])
+    entry("boxDividerBg",              p["level0"])
+    entry("boxDividerFg",              p["level4"])
+
+    # Mentions popup
+    entry("mentionBg",           p["level0"])
+    entry("mentionBgOver",       p["level1"])
+    entry("mentionFg",           p["fg"])
+    entry("mentionFgOver",       p["fg"])
+    entry("mentionFgActive",     p["emphasis"])
+    entry("mentionFgOverActive", p["emphasis"])
+
+    # Calls
+    entry("callArrowFg",            p["rainbow-green"])
+    entry("callArrowMissedFg",      p["rainbow-red"])
+    entry("callIconFg",             p["level6"] if is_dark else active_fg)
+    entry("callBg",                 p["level6"])
+    entry("callNameFg",             p["level6"] if is_dark else active_fg)
+    entry("callFingerprintBg",      p["bg"] + "14")
+    entry("callMuteRipple",         p["bg"] + "14")
+    entry("callAnswerBg",           p["rainbow-green"])
+    entry("callAnswerRipple",       p["rainbow-green"])
+    entry("callAnswerBgOuter",      p["rainbow-green"] + "50")
+    entry("callHangupBg",           p["rainbow-red"])
+    entry("callHangupRipple",       p["rainbow-red"])
+    entry("callCancelBg",           p["level5"] if is_dark else active_fg)
+    entry("callCancelFg",           p["fg"])
+    entry("callCancelRipple",       p["level1"])
+    entry("callMuteBg",             p["level3"])
+    entry("callMuteBgActive",       p["level2"])
+    entry("callMuteFg",             p["level6"])
+    entry("callMuteFgActive",       p["level5"])
+    entry("callMuteRippleBgActive", p["level2"])
+
+    # Media player
+    entry("mediaPlayerBg",         "windowBg")
+    entry("mediaPlayerActiveFg",   p["emphasis"])
+    entry("mediaPlayerInactiveFg", p["level2"])
+    entry("mediaPlayerDisabledFg", p["level1"])
+
+    # Import progress
+    entry("importHistoryImportBg", "windowBg")
+    entry("importIconFg",          p["level6"] if is_dark else active_fg)
+
+    return "\n".join(lines) + "\n"
+
+
+def generate_telegram(light_p, dark_p, output_dir):
+    out = os.path.join(output_dir, "telegram")
+    os.makedirs(out, exist_ok=True)
+
+    light_palette = _telegram_palette(light_p, "light")
+    with open(os.path.join(out, "nibelung.tdesktop-palette"), "w") as f:
+        f.write(light_palette)
+
+    dark_palette = _telegram_palette(dark_p, "dark")
+    with open(os.path.join(out, "nibelung-dark.tdesktop-palette"), "w") as f:
+        f.write(dark_palette)
+
+    print(f"Telegram: wrote {out}")
+
+
+# ---------------------------------------------------------------------------
 # Smoke tests
 # ---------------------------------------------------------------------------
 
@@ -943,8 +1382,6 @@ def run_smoke_tests(dist):
     assert caelestia_dark["colours"]["shadow"] == "000000", \
         f"Caelestia dark shadow: {caelestia_dark['colours']['shadow']!r}"
 
-    print("Smoke tests passed")
-
     # OpenCode
     with open(f"{dist}/opencode/nibelung.json") as f:
         opencode = json.load(f)
@@ -958,6 +1395,26 @@ def run_smoke_tests(dist):
         f"OpenCode primary dark: {opencode['theme']['primary']['dark']!r}"
     assert opencode["theme"]["syntaxKeyword"]["light"] == "l-accent-match", \
         f"OpenCode syntaxKeyword light: {opencode['theme']['syntaxKeyword']['light']!r}"
+
+    # Telegram light
+    with open(f"{dist}/telegram/nibelung.tdesktop-palette") as f:
+        tg_light = f.read()
+    assert "windowBg: #F8F9FA;" in tg_light, \
+        f"Telegram light windowBg missing or wrong"
+    assert "windowFg: #495057;" in tg_light, \
+        f"Telegram light windowFg missing or wrong"
+    assert "windowBgActive: #9BB1FF;" in tg_light, \
+        f"Telegram light accent missing"
+
+    # Telegram dark
+    with open(f"{dist}/telegram/nibelung-dark.tdesktop-palette") as f:
+        tg_dark = f.read()
+    assert "windowBg: #212529;" in tg_dark, \
+        f"Telegram dark windowBg missing or wrong"
+    assert "windowFg: #CED4DA;" in tg_dark, \
+        f"Telegram dark windowFg missing or wrong"
+
+    print("Smoke tests passed")
 
 
 # ---------------------------------------------------------------------------
@@ -982,7 +1439,7 @@ def main():
     parser.add_argument("--output-dir", default="dist",
                         help="Output directory (default: dist)")
     parser.add_argument("--target",     default="all",
-                        choices=["vscode", "neovim", "intellij", "alacritty", "caelestia", "opencode", "all"],
+                        choices=["vscode", "neovim", "intellij", "alacritty", "caelestia", "opencode", "telegram", "all"],
                         help="Which backend to generate (default: all)")
     parser.add_argument("--smoke-test", metavar="DIST_DIR",
                         help="Run smoke tests against generated files in DIST_DIR")
@@ -1001,6 +1458,7 @@ def main():
         "alacritty":  generate_alacritty,
         "caelestia":  generate_caelestia,
         "opencode":   generate_opencode,
+        "telegram":   generate_telegram,
     }
 
     targets = list(generators.keys()) if args.target == "all" else [args.target]
