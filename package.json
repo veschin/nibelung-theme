@@ -1,0 +1,21 @@
+{
+  "name": "nibelung-theme",
+  "version": "0.1.0",
+  "description": "Minimalist Nibelung color themes generated from the Emacs palette.",
+  "keywords": [
+    "pi-package",
+    "pi-theme",
+    "theme",
+    "emacs-theme",
+    "nibelung"
+  ],
+  "files": [
+    "dist/pi/themes",
+    "README.org"
+  ],
+  "pi": {
+    "themes": [
+      "./dist/pi/themes"
+    ]
+  }
+}

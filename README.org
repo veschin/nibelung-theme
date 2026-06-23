@@ -35,8 +35,9 @@ All non-Emacs themes are generated from the Emacs palette via ~make export~. Lig
 - [[#neovim][Neovim]]
 - [[#intellij-idea][IntelliJ IDEA]]
 - [[#alacritty][Alacritty]]
-- [[#telegram-desktop][Telegram Desktop]]
 - [[#caelestia--quickshell][Caelestia / Quickshell]]
+- [[#pi][Pi]]
+- [[#omp][OMP]]
 - [[#opencode][OpenCode]]
 ** Emacs
 *** straight.el
@@ -105,12 +106,7 @@ curl -o ~/.config/alacritty/nibelung-dark.toml \
 import = ["~/.config/alacritty/nibelung.toml"]      # light
 import = ["~/.config/alacritty/nibelung-dark.toml"]  # dark
 #+end_src
-** Telegram Desktop
-#+begin_src sh
-git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
-  cp /tmp/nibelung/dist/telegram/*.tdesktop-palette ~/
-#+end_src
-Send the ~.tdesktop-palette~ file to Saved Messages in Telegram, then tap to apply. Apply light in day mode, dark in night mode -- Telegram auto-switches.
+
 ** Caelestia / Quickshell
 #+begin_src sh
 git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
@@ -118,6 +114,45 @@ git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
   ~/.local/state/caelestia/scheme.json
 #+end_src
 For light variant use ~nibelung-scheme.json~. Caelestia hot-reloads the scheme.
+** Pi
+#+begin_src sh
+pi install git:github.com/veschin/nibelung-theme
+#+end_src
+Then choose ~nibelung~ or ~nibelung-dark~ in ~/settings~, or set it directly:
+#+begin_src json
+{ "theme": "nibelung" }
+#+end_src
+#+begin_src json
+{ "theme": "nibelung-dark" }
+#+end_src
+Manual install:
+#+begin_src sh
+git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
+  mkdir -p ~/.pi/agent/themes && \
+  cp /tmp/nibelung/dist/pi/themes/*.json ~/.pi/agent/themes/
+#+end_src
+Pi uses the generated semantic theme tokens for TUI chrome, messages, tools, diffs, Markdown, syntax highlighting, thinking-level borders, bash mode, and HTML export.
+** OMP
+#+begin_quote
+OMP (Oh My Pi) is the Pi successor; themes are drop-in JSON files in ~~/.omp/agent/themes~~.
+#+end_quote
+#+begin_src sh
+git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
+  mkdir -p ~/.omp/agent/themes && \
+  cp /tmp/nibelung/dist/omp/themes/*.json ~/.omp/agent/themes/
+#+end_src
+Pick ~nibelung~ (light) or ~nibelung-dark~ under ~Appearance~ in ~/settings~, or set the slots directly:
+#+begin_src sh
+omp config set theme.light nibelung
+omp config set theme.dark nibelung-dark
+#+end_src
+#+begin_src yaml
+# ~/.omp/agent/config.yml
+theme:
+  light: nibelung
+  dark: nibelung-dark
+#+end_src
+OMP auto-selects the slot from your terminal background. The theme drives TUI chrome, messages, tool blocks, diffs, Markdown, syntax highlighting, thinking-level borders, bash/python editor modes, the status line, and HTML export.
 ** OpenCode
 #+begin_src sh
 mkdir -p ~/.config/opencode/themes && \

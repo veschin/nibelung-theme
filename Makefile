@@ -76,12 +76,15 @@ test-export: export
 	@python3 -c "import tomllib; tomllib.load(open('dist/alacritty/nibelung.toml','rb'))" 2>/dev/null || echo "  WARN: tomllib needs Python 3.11+, skipping TOML validation"
 	@python3 -m json.tool dist/caelestia/nibelung-scheme.json > /dev/null
 	@python3 -m json.tool dist/caelestia/nibelung-dark-scheme.json > /dev/null
-	@python3 export/generate.py --smoke-test dist
+	@python3 -m json.tool dist/pi/themes/nibelung.json > /dev/null
+	@python3 -m json.tool dist/pi/themes/nibelung-dark.json > /dev/null
+	@python3 -m json.tool dist/omp/themes/nibelung.json > /dev/null
+	@python3 -m json.tool dist/omp/themes/nibelung-dark.json > /dev/null
 	@echo "All export validations passed"
 
-.PHONY: install install-alacritty install-caelestia install-telegram
+.PHONY: install install-alacritty install-caelestia
 
-install: install-alacritty install-caelestia install-telegram
+install: install-alacritty install-caelestia
 
 install-alacritty: export
 	@echo "=== Installing Alacritty themes ==="
@@ -97,14 +100,4 @@ install-caelestia: export
 	sudo cp dist/caelestia/default/dark.txt "$$DEST/nibelung/default/dark.txt" && \
 	echo "Caelestia: installed to $$DEST/nibelung/"
 
-TELEGRAM_THEMES_DIR = $(HOME)/.local/share/nibelung-theme/telegram
 
-install-telegram: export
-	@echo "=== Installing Telegram themes ==="
-	@mkdir -p $(TELEGRAM_THEMES_DIR)
-	cp dist/telegram/nibelung.tdesktop-palette $(TELEGRAM_THEMES_DIR)/
-	cp dist/telegram/nibelung-dark.tdesktop-palette $(TELEGRAM_THEMES_DIR)/
-	@echo "Telegram: copied to $(TELEGRAM_THEMES_DIR)/"
-	@echo "  Apply: Telegram > Settings > Chat Settings > Choose from file"
-	@echo "  Light: $(TELEGRAM_THEMES_DIR)/nibelung.tdesktop-palette"
-	@echo "  Dark:  $(TELEGRAM_THEMES_DIR)/nibelung-dark.tdesktop-palette"

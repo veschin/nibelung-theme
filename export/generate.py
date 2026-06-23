@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Nibelung theme generator -- exports palettes from Emacs and generates themes
-for VSCode, Neovim, IntelliJ IDEA, Alacritty, and Caelestia/Quickshell."""
+for VSCode, Neovim, IntelliJ IDEA, Alacritty, Caelestia/Quickshell, OpenCode,
+Pi, and OMP."""
 
 import argparse
 import json
@@ -72,12 +73,92 @@ def ansi(p):
     }
 
 
+def _agent_colors():
+    """Shared Pi/OMP color-token -> palette-key map (51 tokens).
+
+    OMP (Oh My Pi) is the Pi successor and reuses Pi's token set verbatim;
+    the OMP backend extends this map with python-mode and status-line tokens.
+    Values are palette var names resolved against ``vars`` at load time.
+    """
+    return {
+        # Core UI
+        "accent": "emphasis",
+        "border": "level2",
+        "borderAccent": "accent-bright",
+        "borderMuted": "level1",
+        "success": "rainbow-green",
+        "error": "rainbow-red",
+        "warning": "rainbow-orange",
+        "muted": "level4",
+        "dim": "level3",
+        "text": "fg",
+        "thinkingText": "level4",
+
+        # Backgrounds and content
+        "selectedBg": "accent-subtle",
+        "userMessageBg": "level0",
+        "userMessageText": "fg",
+        "customMessageBg": "custom-message-bg",
+        "customMessageText": "fg",
+        "customMessageLabel": "rainbow-magenta",
+        "toolPendingBg": "level0",
+        "toolSuccessBg": "tool-success-bg",
+        "toolErrorBg": "tool-error-bg",
+        "toolTitle": "emphasis",
+        "toolOutput": "fg",
+
+        # Markdown
+        # Pi/OMP render headings with bold (+underline for h1). To make them
+        # visually distinct from body text in a terminal (where Nibelung's
+        # bg is not guaranteed), we use level6 — the farthest from fg in
+        # the grayscale range.
+        "mdHeading": "level6",
+        "mdLink": "link",
+        "mdLinkUrl": "level3",
+        "mdCode": "level3",
+        "mdCodeBlock": "fg",
+        "mdCodeBlockBorder": "level2",
+        "mdQuote": "level3",
+        "mdQuoteBorder": "level2",
+        "mdHr": "level2",
+        "mdListBullet": "level4",
+
+        # Tool diffs
+        "toolDiffAdded": "rainbow-green",
+        "toolDiffRemoved": "rainbow-red",
+        "toolDiffContext": "level3",
+
+        # Syntax highlighting — follows Nibelung's semantic roles (see roles()
+        # above). The seven-level grayscale is the backbone: level2 (quiet)
+        # for operators/punctuation, level3 for comments/strings/types,
+        # level4 for keywords/numbers/variables. Only function names get the
+        # emphasis blue. Pi/OMP lack per-element backgrounds, so the Emacs
+        # comment-bg distinction is lost; comments share level3 with strings.
+        "syntaxComment": "level3",
+        "syntaxKeyword": "level4",
+        "syntaxFunction": "emphasis",
+        "syntaxVariable": "level4",
+        "syntaxString": "level3",
+        "syntaxNumber": "level4",
+        "syntaxType": "level3",
+        "syntaxOperator": "level2",
+        "syntaxPunctuation": "level2",
+
+        # Thinking-level editor borders
+        "thinkingOff": "level1",
+        "thinkingMinimal": "level2",
+        "thinkingLow": "level3",
+        "thinkingMedium": "accent-light",
+        "thinkingHigh": "accent-bright",
+        "thinkingXhigh": "accent-match",
+
+        "bashMode": "rainbow-green",
+    }
+
+
 # ---------------------------------------------------------------------------
 # VSCode backend
 # ---------------------------------------------------------------------------
-
-def alpha(color, a):
-    return color + a
 
 
 def _vscode_theme(p, r, a, name, ui_theme):
@@ -87,13 +168,13 @@ def _vscode_theme(p, r, a, name, ui_theme):
         "editorCursor.foreground":               p["fg"],
         "editor.selectionBackground":            p["accent-subtle"],
         "editor.lineHighlightBackground":        p["level0"],
-        "editor.findMatchBackground":            alpha(p["level5"], "80"),
-        "editor.findMatchHighlightBackground":   alpha(p["level4"], "40"),
+        "editor.findMatchBackground":            p["level5"] + "80",
+        "editor.findMatchHighlightBackground":   p["level4"] + "40",
         "editorLineNumber.foreground":           p["fg"],
         "editorLineNumber.activeForeground":     p["emphasis"],
         "editorIndentGuide.background":          p["level0"],
         "editorIndentGuide.activeBackground":    p["level1"],
-        "editorBracketMatch.background":         alpha(p["emphasis"], "40"),
+        "editorBracketMatch.background":         p["emphasis"] + "40",
         "editorBracketMatch.border":             p["emphasis"],
         "editorBracketHighlight.foreground1":    p["accent-light"],
         "editorBracketHighlight.foreground2":    p["level3"],
@@ -119,15 +200,15 @@ def _vscode_theme(p, r, a, name, ui_theme):
         "tab.inactiveBackground":                p["level0"],
         "tab.activeForeground":                  p["fg"],
         "tab.inactiveForeground":                p["level3"],
-        "list.activeSelectionBackground":        alpha(p["emphasis"], "40"),
-        "list.hoverBackground":                  alpha(p["level0"], "80"),
+        "list.activeSelectionBackground":        p["emphasis"] + "40",
+        "list.hoverBackground":                  p["level0"] + "80",
         "list.focusBackground":                  p["level0"],
         "panel.background":                      p["level0"],
         "panel.border":                          p["level1"],
-        "scrollbarSlider.background":            alpha(p["level2"], "60"),
-        "scrollbarSlider.hoverBackground":       alpha(p["level3"], "60"),
-        "diffEditor.insertedTextBackground":     alpha(p["rainbow-green"], "20"),
-        "diffEditor.removedTextBackground":      alpha(p["rainbow-red"], "20"),
+        "scrollbarSlider.background":            p["level2"] + "60",
+        "scrollbarSlider.hoverBackground":       p["level3"] + "60",
+        "diffEditor.insertedTextBackground":     p["rainbow-green"] + "20",
+        "diffEditor.removedTextBackground":      p["rainbow-red"] + "20",
         "minimap.background":                    p["bg"],
         "terminal.ansiBlack":                    a["black"],
         "terminal.ansiRed":                      a["red"],
@@ -150,54 +231,42 @@ def _vscode_theme(p, r, a, name, ui_theme):
     # NOTE: VSCode tokenColors do not support per-scope backgroundColor.
     # Comment background highlighting (the Emacs theme's signature feature)
     # cannot be reproduced here. IntelliJ and Neovim support it.
+    # NOTE: VSCode tokenColors do not support per-scope backgroundColor.
+    # Comment background highlighting (the Emacs theme's signature feature)
+    # cannot be reproduced here. IntelliJ and Neovim support it.
+    _token_roles = {
+        "comment": "comment",
+        "comment.block.documentation": "optional",
+        "keyword, keyword.control, keyword.other": "constant",
+        "storage.type, storage.modifier": "builtin",
+        "string, string.quoted.single, string.quoted.double": "optional",
+        "string.regexp": "constant",
+        "entity.name.function": "bold",
+        "entity.name.function.definition": "optional",
+        "entity.name.type, entity.name.class, support.class, entity.other.inherited-class": "builtin",
+        "variable, variable.other.readwrite": "builtin",
+        "variable.parameter": "optional",
+        "variable.language": "builtin",
+        "variable.other.property": "optional",
+        "constant.numeric, constant.language, constant.other": "constant",
+        "keyword.operator": "quiet",
+        "punctuation": "quiet",
+        "support.function": "bold",
+        "entity.name.tag": "builtin",
+        "entity.other.attribute-name": "quiet",
+        "markup.heading": "function",
+        "markup.bold, markup.italic": "bold",
+        "markup.inline.raw": "constant",
+    }
     token_colors = [
-        {"scope": "comment",
-         "settings": {"fontStyle": "", "foreground": r["comment"]}},
-        {"scope": "comment.block.documentation",
-         "settings": {"fontStyle": "", "foreground": r["optional"]}},
-        {"scope": "keyword, keyword.control, keyword.other",
-         "settings": {"fontStyle": "", "foreground": r["constant"]}},
-        {"scope": "storage.type, storage.modifier",
-         "settings": {"fontStyle": "", "foreground": r["builtin"]}},
-        {"scope": "string, string.quoted.single, string.quoted.double",
-         "settings": {"fontStyle": "", "foreground": r["optional"]}},
-        {"scope": "string.regexp",
-         "settings": {"fontStyle": "", "foreground": r["constant"]}},
-        {"scope": "entity.name.function",
-         "settings": {"fontStyle": "", "foreground": r["bold"]}},
-        {"scope": "entity.name.function.definition",
-         "settings": {"fontStyle": "", "foreground": r["optional"]}},
-        {"scope": "entity.name.type, entity.name.class, support.class, entity.other.inherited-class",
-         "settings": {"fontStyle": "", "foreground": r["builtin"]}},
-        {"scope": "variable, variable.other.readwrite",
-         "settings": {"fontStyle": "", "foreground": r["builtin"]}},
-        {"scope": "variable.parameter",
-         "settings": {"fontStyle": "", "foreground": r["optional"]}},
-        {"scope": "variable.language",
-         "settings": {"fontStyle": "", "foreground": r["builtin"]}},
-        {"scope": "variable.other.property",
-         "settings": {"fontStyle": "", "foreground": r["optional"]}},
-        {"scope": "constant.numeric, constant.language, constant.other",
-         "settings": {"fontStyle": "", "foreground": r["constant"]}},
-        {"scope": "keyword.operator",
-         "settings": {"fontStyle": "", "foreground": r["quiet"]}},
-        {"scope": "punctuation",
-         "settings": {"fontStyle": "", "foreground": r["quiet"]}},
-        {"scope": "support.function",
-         "settings": {"fontStyle": "", "foreground": r["bold"]}},
-        {"scope": "entity.name.tag",
-         "settings": {"fontStyle": "", "foreground": r["builtin"]}},
-        {"scope": "entity.other.attribute-name",
-         "settings": {"fontStyle": "", "foreground": r["quiet"]}},
-        {"scope": "markup.heading",
-         "settings": {"fontStyle": "", "foreground": r["function"]}},
-        {"scope": "markup.bold, markup.italic",
-         "settings": {"fontStyle": "", "foreground": r["bold"]}},
-        {"scope": "markup.inline.raw",
-         "settings": {"fontStyle": "", "foreground": r["constant"]}},
+        {"scope": s, "settings": {"fontStyle": "", "foreground": r[rname]}}
+        for s, rname in _token_roles.items()
+    ]
+    # meta.embedded uses fg directly, not a role
+    token_colors.append(
         {"scope": "meta.embedded, source.embedded",
          "settings": {"fontStyle": "", "foreground": p["fg"]}},
-    ]
+    )
 
     semantic_token_colors = {
         "function.declaration": {"foreground": r["optional"]},
@@ -277,122 +346,124 @@ def _nvim_theme(p, r, a, name, variant):
     ]
 
     def hl(group, **opts):
+        opts.setdefault("bold", False)
+        opts.setdefault("italic", False)
         lines.append(_nvim_hl(group, opts))
 
-    hl("Normal",    fg=p["fg"],       bg=p["bg"],       bold=False, italic=False)
-    hl("Comment",   fg=r["comment"],  bg=p["comment-bg"], bold=False, italic=False)
-    hl("String",    fg=r["optional"],                   bold=False, italic=False)
-    hl("Character", fg=r["optional"],                   bold=False, italic=False)
-    hl("Function",  fg=r["bold"],                       bold=False, italic=False)
-    hl("Keyword",   fg=r["constant"],                   bold=False, italic=False)
-    hl("Type",      fg=r["builtin"],                    bold=False, italic=False)
-    hl("Identifier",fg=p["fg"],                         bold=False, italic=False)
-    hl("Constant",  fg=r["constant"],                   bold=False, italic=False)
-    hl("Number",    fg=r["constant"],                   bold=False, italic=False)
-    hl("Boolean",   fg=r["constant"],                   bold=False, italic=False)
-    hl("Operator",  fg=r["quiet"],                      bold=False, italic=False)
-    hl("PreProc",   fg=r["builtin"],                    bold=False, italic=False)
-    hl("Special",   fg=r["constant"],                   bold=False, italic=False)
-    hl("Delimiter", fg=r["bold"],                       bold=False, italic=False)
-    hl("Statement", fg=r["constant"],                   bold=False, italic=False)
-    hl("Title",     fg=r["function"],                   bold=False, italic=False)
-    hl("Directory", fg=r["constant"],                   bold=False, italic=False)
+    hl("Normal",    fg=p["fg"],       bg=p["bg"])
+    hl("Comment",   fg=r["comment"],  bg=p["comment-bg"])
+    hl("String",    fg=r["optional"])
+    hl("Character", fg=r["optional"])
+    hl("Function",  fg=r["bold"])
+    hl("Keyword",   fg=r["constant"])
+    hl("Type",      fg=r["builtin"])
+    hl("Identifier",fg=p["fg"])
+    hl("Constant",  fg=r["constant"])
+    hl("Number",    fg=r["constant"])
+    hl("Boolean",   fg=r["constant"])
+    hl("Operator",  fg=r["quiet"])
+    hl("PreProc",   fg=r["builtin"])
+    hl("Special",   fg=r["constant"])
+    hl("Delimiter", fg=r["bold"])
+    hl("Statement", fg=r["constant"])
+    hl("Title",     fg=r["function"])
+    hl("Directory", fg=r["constant"])
 
     lines.append("")
     lines.append("-- Treesitter groups")
 
-    hl("@keyword",              fg=r["constant"],                   bold=False, italic=False)
-    hl("@keyword.return",       fg=r["constant"],                   bold=False, italic=False)
-    hl("@keyword.function",     fg=r["constant"],                   bold=False, italic=False)
-    hl("@keyword.import",       fg=r["constant"],                   bold=False, italic=False)
-    hl("@string",               fg=r["optional"],                   bold=False, italic=False)
-    hl("@string.escape",        fg=r["quiet"],                      bold=False, italic=False)
-    hl("@string.regexp",        fg=r["constant"],                   bold=False, italic=False)
-    hl("@string.documentation", fg=r["optional"],                   bold=False, italic=False)
-    hl("@comment",              fg=r["comment"],  bg=p["comment-bg"], bold=False, italic=False)
-    hl("@function",             fg=r["bold"],                       bold=False, italic=False)
-    hl("@function.call",        fg=r["bold"],                       bold=False, italic=False)
-    hl("@function.builtin",     fg=r["bold"],                       bold=False, italic=False)
-    hl("@variable",             fg=r["builtin"],                    bold=False, italic=False)
-    hl("@variable.builtin",     fg=r["builtin"],                    bold=False, italic=False)
-    hl("@variable.parameter",   fg=r["optional"],                   bold=False, italic=False)
-    hl("@variable.member",      fg=r["optional"],                   bold=False, italic=False)
-    hl("@type",                 fg=r["builtin"],                    bold=False, italic=False)
-    hl("@type.builtin",         fg=r["builtin"],                    bold=False, italic=False)
-    hl("@constructor",          fg=r["builtin"],                    bold=False, italic=False)
-    hl("@module",               fg=r["builtin"],                    bold=False, italic=False)
-    hl("@property",             fg=r["optional"],                   bold=False, italic=False)
-    hl("@operator",             fg=r["quiet"],                      bold=False, italic=False)
-    hl("@number",               fg=r["constant"],                   bold=False, italic=False)
-    hl("@boolean",              fg=r["constant"],                   bold=False, italic=False)
-    hl("@punctuation.bracket",  fg=r["quiet"],                      bold=False, italic=False)
-    hl("@punctuation.delimiter",fg=r["quiet"],                      bold=False, italic=False)
-    hl("@constant",             fg=r["constant"],                   bold=False, italic=False)
-    hl("@constant.builtin",     fg=r["constant"],                   bold=False, italic=False)
-    hl("@markup.heading",       fg=r["function"],                   bold=False, italic=False)
-    hl("@markup.strong",        fg=r["bold"],                       bold=False, italic=False)
-    hl("@markup.italic",        fg=r["bold"],                       bold=False, italic=False)
-    hl("@markup.raw",           fg=r["constant"],                   bold=False, italic=False)
-    hl("@markup.link",          fg=p["link"],                       bold=False, italic=False)
-    hl("@tag",                  fg=r["builtin"],                    bold=False, italic=False)
-    hl("@tag.attribute",        fg=r["quiet"],                      bold=False, italic=False)
-    hl("@tag.delimiter",        fg=r["quiet"],                      bold=False, italic=False)
+    hl("@keyword",              fg=r["constant"])
+    hl("@keyword.return",       fg=r["constant"])
+    hl("@keyword.function",     fg=r["constant"])
+    hl("@keyword.import",       fg=r["constant"])
+    hl("@string",               fg=r["optional"])
+    hl("@string.escape",        fg=r["quiet"])
+    hl("@string.regexp",        fg=r["constant"])
+    hl("@string.documentation", fg=r["optional"])
+    hl("@comment",              fg=r["comment"],  bg=p["comment-bg"])
+    hl("@function",             fg=r["bold"])
+    hl("@function.call",        fg=r["bold"])
+    hl("@function.builtin",     fg=r["bold"])
+    hl("@variable",             fg=r["builtin"])
+    hl("@variable.builtin",     fg=r["builtin"])
+    hl("@variable.parameter",   fg=r["optional"])
+    hl("@variable.member",      fg=r["optional"])
+    hl("@type",                 fg=r["builtin"])
+    hl("@type.builtin",         fg=r["builtin"])
+    hl("@constructor",          fg=r["builtin"])
+    hl("@module",               fg=r["builtin"])
+    hl("@property",             fg=r["optional"])
+    hl("@operator",             fg=r["quiet"])
+    hl("@number",               fg=r["constant"])
+    hl("@boolean",              fg=r["constant"])
+    hl("@punctuation.bracket",  fg=r["quiet"])
+    hl("@punctuation.delimiter",fg=r["quiet"])
+    hl("@constant",             fg=r["constant"])
+    hl("@constant.builtin",     fg=r["constant"])
+    hl("@markup.heading",       fg=r["function"])
+    hl("@markup.strong",        fg=r["bold"])
+    hl("@markup.italic",        fg=r["bold"])
+    hl("@markup.raw",           fg=r["constant"])
+    hl("@markup.link",          fg=p["link"])
+    hl("@tag",                  fg=r["builtin"])
+    hl("@tag.attribute",        fg=r["quiet"])
+    hl("@tag.delimiter",        fg=r["quiet"])
 
     lines.append("")
     lines.append("-- LSP semantic tokens")
 
-    hl("@lsp.type.function",   fg=r["bold"],                        bold=False, italic=False)
-    hl("@lsp.type.variable",   fg=r["builtin"],                     bold=False, italic=False)
-    hl("@lsp.type.type",       fg=r["builtin"],                     bold=False, italic=False)
-    hl("@lsp.type.keyword",    fg=r["constant"],                    bold=False, italic=False)
-    hl("@lsp.type.comment",    fg=r["comment"],  bg=p["comment-bg"], bold=False, italic=False)
-    hl("@lsp.type.string",     fg=r["optional"],                    bold=False, italic=False)
-    hl("@lsp.type.number",     fg=r["constant"],                    bold=False, italic=False)
-    hl("@lsp.type.operator",   fg=r["quiet"],                       bold=False, italic=False)
-    hl("@lsp.type.property",   fg=r["optional"],                    bold=False, italic=False)
-    hl("@lsp.type.parameter",  fg=r["optional"],                    bold=False, italic=False)
-    hl("@lsp.type.namespace",  fg=r["builtin"],                     bold=False, italic=False)
+    hl("@lsp.type.function",   fg=r["bold"])
+    hl("@lsp.type.variable",   fg=r["builtin"])
+    hl("@lsp.type.type",       fg=r["builtin"])
+    hl("@lsp.type.keyword",    fg=r["constant"])
+    hl("@lsp.type.comment",    fg=r["comment"],  bg=p["comment-bg"])
+    hl("@lsp.type.string",     fg=r["optional"])
+    hl("@lsp.type.number",     fg=r["constant"])
+    hl("@lsp.type.operator",   fg=r["quiet"])
+    hl("@lsp.type.property",   fg=r["optional"])
+    hl("@lsp.type.parameter",  fg=r["optional"])
+    hl("@lsp.type.namespace",  fg=r["builtin"])
     lines.append(_nvim_hl("@lsp.mod.deprecated", {"strikethrough": True}))
 
     lines.append("")
     lines.append("-- UI groups")
 
-    hl("Cursor",       fg=p["bg"],       bg=p["fg"],       bold=False, italic=False)
-    hl("CursorLine",                     bg=p["level0"],   bold=False, italic=False)
-    hl("CursorColumn",                   bg=p["level0"],   bold=False, italic=False)
-    hl("ColorColumn",                    bg=p["level0"],   bold=False, italic=False)
-    hl("Visual",       fg=p["level1"],   bg=p["emphasis"], bold=False, italic=False)
-    hl("Search",       fg=p["level0"],   bg=p["level5"],   bold=False, italic=False)
-    hl("IncSearch",    fg=p["level0"],   bg=p["level5"],   bold=False, italic=False)
-    hl("MatchParen",   fg=p["level1"],   bg=p["emphasis"], bold=False, italic=False)
-    hl("Pmenu",        fg=p["fg"],       bg=p["level0"],   bold=False, italic=False)
-    hl("PmenuSel",     fg=p["level1"],   bg=p["emphasis"], bold=False, italic=False)
-    hl("PmenuSbar",                      bg=p["level1"],   bold=False, italic=False)
-    hl("PmenuThumb",                     bg=p["level3"],   bold=False, italic=False)
-    hl("NormalFloat",  fg=p["fg"],       bg=p["level0"],   bold=False, italic=False)
-    hl("FloatBorder",  fg=p["level2"],   bg=p["level0"],   bold=False, italic=False)
-    hl("StatusLine",   fg=p["level0"],   bg=p["fg"],       bold=False, italic=False)
-    hl("StatusLineNC", fg=p["level5"],   bg=p["level0"],   bold=False, italic=False)
-    hl("LineNr",       fg=p["fg"],       bg=p["bg"],       bold=False, italic=False)
-    hl("CursorLineNr", fg=p["emphasis"], bg=p["bg"],       bold=False, italic=False)
-    hl("SignColumn",   fg=p["fg"],       bg=p["bg"],       bold=False, italic=False)
-    hl("Folded",       fg=p["level3"],   bg=p["level0"],   bold=False, italic=False)
-    hl("FoldColumn",   fg=p["level3"],   bg=p["bg"],       bold=False, italic=False)
-    hl("NonText",      fg=p["level2"],                     bold=False, italic=False)
-    hl("SpecialKey",   fg=p["level2"],                     bold=False, italic=False)
-    hl("Whitespace",   fg=p["level2"],                     bold=False, italic=False)
-    hl("Conceal",      fg=p["level3"],                     bold=False, italic=False)
-    hl("WinSeparator", fg=p["level1"],                     bold=False, italic=False)
-    hl("VertSplit",    fg=p["level1"],                     bold=False, italic=False)
-    hl("WildMenu",     fg=p["level1"],   bg=p["emphasis"], bold=False, italic=False)
-    hl("TabLine",      fg=p["level3"],   bg=p["level0"],   bold=False, italic=False)
-    hl("TabLineFill",                    bg=p["level0"],   bold=False, italic=False)
-    hl("TabLineSel",   fg=p["fg"],       bg=p["bg"],       bold=False, italic=False)
-    hl("ErrorMsg",     fg=p["level5"],                     bold=False, italic=False)
-    hl("WarningMsg",   fg=p["level4"],                     bold=False, italic=False)
-    hl("MoreMsg",      fg=p["emphasis"],                   bold=False, italic=False)
-    hl("ModeMsg",      fg=p["fg"],                         bold=False, italic=False)
-    hl("Question",     fg=p["emphasis"],                   bold=False, italic=False)
+    hl("Cursor",       fg=p["bg"],       bg=p["fg"])
+    hl("CursorLine",                     bg=p["level0"])
+    hl("CursorColumn",                   bg=p["level0"])
+    hl("ColorColumn",                    bg=p["level0"])
+    hl("Visual",       fg=p["level1"],   bg=p["emphasis"])
+    hl("Search",       fg=p["level0"],   bg=p["level5"])
+    hl("IncSearch",    fg=p["level0"],   bg=p["level5"])
+    hl("MatchParen",   fg=p["level1"],   bg=p["emphasis"])
+    hl("Pmenu",        fg=p["fg"],       bg=p["level0"])
+    hl("PmenuSel",     fg=p["level1"],   bg=p["emphasis"])
+    hl("PmenuSbar",                      bg=p["level1"])
+    hl("PmenuThumb",                     bg=p["level3"])
+    hl("NormalFloat",  fg=p["fg"],       bg=p["level0"])
+    hl("FloatBorder",  fg=p["level2"],   bg=p["level0"])
+    hl("StatusLine",   fg=p["level0"],   bg=p["fg"])
+    hl("StatusLineNC", fg=p["level5"],   bg=p["level0"])
+    hl("LineNr",       fg=p["fg"],       bg=p["bg"])
+    hl("CursorLineNr", fg=p["emphasis"], bg=p["bg"])
+    hl("SignColumn",   fg=p["fg"],       bg=p["bg"])
+    hl("Folded",       fg=p["level3"],   bg=p["level0"])
+    hl("FoldColumn",   fg=p["level3"],   bg=p["bg"])
+    hl("NonText",      fg=p["level2"])
+    hl("SpecialKey",   fg=p["level2"])
+    hl("Whitespace",   fg=p["level2"])
+    hl("Conceal",      fg=p["level3"])
+    hl("WinSeparator", fg=p["level1"])
+    hl("VertSplit",    fg=p["level1"])
+    hl("WildMenu",     fg=p["level1"],   bg=p["emphasis"])
+    hl("TabLine",      fg=p["level3"],   bg=p["level0"])
+    hl("TabLineFill",                    bg=p["level0"])
+    hl("TabLineSel",   fg=p["fg"],       bg=p["bg"])
+    hl("ErrorMsg",     fg=p["level5"])
+    hl("WarningMsg",   fg=p["level4"])
+    hl("MoreMsg",      fg=p["emphasis"])
+    hl("ModeMsg",      fg=p["fg"])
+    hl("Question",     fg=p["emphasis"])
     lines.append(_nvim_hl("SpellBad",   {"sp": p["level5"],   "undercurl": True}))
     lines.append(_nvim_hl("SpellCap",   {"sp": p["level4"],   "undercurl": True}))
     lines.append(_nvim_hl("SpellRare",  {"sp": p["emphasis"], "undercurl": True}))
@@ -401,10 +472,10 @@ def _nvim_theme(p, r, a, name, variant):
     lines.append("")
     lines.append("-- Diagnostics")
 
-    hl("DiagnosticError", fg=p["level5"],   bold=False, italic=False)
-    hl("DiagnosticWarn",  fg=p["level4"],   bold=False, italic=False)
-    hl("DiagnosticInfo",  fg=p["emphasis"], bold=False, italic=False)
-    hl("DiagnosticHint",  fg=p["level3"],   bold=False, italic=False)
+    hl("DiagnosticError", fg=p["level5"])
+    hl("DiagnosticWarn",  fg=p["level4"])
+    hl("DiagnosticInfo",  fg=p["emphasis"])
+    hl("DiagnosticHint",  fg=p["level3"])
     lines.append(_nvim_hl("DiagnosticUnderlineError", {"sp": p["level5"],   "underline": True}))
     lines.append(_nvim_hl("DiagnosticUnderlineWarn",  {"sp": p["level4"],   "underline": True}))
     lines.append(_nvim_hl("DiagnosticUnderlineInfo",  {"sp": p["emphasis"], "underline": True}))
@@ -413,10 +484,10 @@ def _nvim_theme(p, r, a, name, variant):
     lines.append("")
     lines.append("-- Diff")
 
-    hl("DiffAdd",    fg=p["rainbow-green"],  bg=p["level1"], bold=False, italic=False)
-    hl("DiffDelete", fg=p["rainbow-red"],    bg=p["level1"], bold=False, italic=False)
-    hl("DiffChange", fg=p["rainbow-yellow"], bg=p["level1"], bold=False, italic=False)
-    hl("DiffText",   fg=p["rainbow-yellow"], bg=p["level2"], bold=False, italic=False)
+    hl("DiffAdd",    fg=p["rainbow-green"],  bg=p["level1"])
+    hl("DiffDelete", fg=p["rainbow-red"],    bg=p["level1"])
+    hl("DiffChange", fg=p["rainbow-yellow"], bg=p["level1"])
+    hl("DiffText",   fg=p["rainbow-yellow"], bg=p["level2"])
 
     lines.append("")
     lines.append("-- Terminal colors")
@@ -886,538 +957,123 @@ def generate_opencode(light_p, dark_p, output_dir):
 
 
 # ---------------------------------------------------------------------------
-# Telegram Desktop backend
+# Pi backend
 # ---------------------------------------------------------------------------
 
-def _telegram_palette(p, variant):
-    """Generate a .tdesktop-palette text for Telegram Desktop.
+PI_THEME_SCHEMA = "https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json"
 
-    Undefined entries fall back to Telegram's built-in defaults, so the output
-    only covers the variables whose mapping to the nibelung palette is meaningful.
-    """
+
+def _pi_theme(p, name, variant):
     is_dark = (variant == "dark")
-    active_fg = p["level1"] if is_dark else p["level6"]
 
-    # Dark mode: emphasis is foreground accent, not background fill.
-    # Large areas (bubbles, selected rows, folders) use neutral grays.
-    msg_out_bg = _blend(p["level1"], p["accent-subtle"], 0.15) if is_dark else p["accent-subtle"]
-    msg_out_bg_sel = _blend(p["level1"], p["accent-subtle"], 0.35) if is_dark else p["accent-light"]
-    sel_bg = p["level2"] if is_dark else p["emphasis"]
-    sel_fg = p["level6"] if is_dark else active_fg
-    sel_secondary = p["level4"] if is_dark else active_fg
-    sel_accent = p["emphasis"] if is_dark else active_fg
+    vars_ = dict(sorted(p.items()))
+    vars_.update({
+        "custom-message-bg": _blend(p["level0"], p["rainbow-magenta"], 0.12),
+        "tool-success-bg": _blend(p["bg"], p["rainbow-green"], 0.14 if is_dark else 0.16),
+        "tool-error-bg": _blend(p["bg"], p["rainbow-red"], 0.14 if is_dark else 0.16),
+        "export-info-bg": _blend(p["level0"], p["accent-subtle"], 0.35),
+    })
 
-    lines = []
+    colors = _agent_colors()
 
-    def entry(name, value):
-        lines.append(f"{name}: {value};")
-
-    # Window base
-    entry("windowBg",               p["bg"])
-    entry("windowFg",               p["fg"])
-    entry("windowBgOver",           p["level0"])
-    entry("windowBgRipple",         p["level1"])
-    entry("windowFgOver",           "windowFg")
-    entry("windowSubTextFg",        p["level3"])
-    entry("windowSubTextFgOver",    p["level4"])
-    entry("windowBoldFg",           p["level5"])
-    entry("windowBoldFgOver",       p["level6"])
-    entry("windowBgActive",         p["emphasis"])
-    entry("windowFgActive",         active_fg)
-    entry("windowActiveTextFg",     p["link"])
-    entry("windowShadowFg",         "#000000")
-    entry("windowShadowFgFallback", p["level0"])
-    entry("shadowFg",               "#00000028")
-
-    # Buttons
-    entry("activeButtonBg",              "windowBgActive")
-    entry("activeButtonBgOver",          p["accent-bright"])
-    entry("activeButtonBgRipple",        p["accent-match"])
-    entry("activeButtonFg",              "windowFgActive")
-    entry("activeButtonFgOver",          "activeButtonFg")
-    entry("activeButtonSecondaryFg",     p["accent-subtle"])
-    entry("activeButtonSecondaryFgOver", "activeButtonSecondaryFg")
-    entry("activeLineFg",                p["emphasis"])
-    entry("activeLineFgError",           p["rainbow-red"])
-
-    entry("lightButtonBg",       "windowBg")
-    entry("lightButtonBgOver",   p["level0"])
-    entry("lightButtonBgRipple", p["level1"])
-    entry("lightButtonFg",       "windowActiveTextFg")
-    entry("lightButtonFgOver",   "lightButtonFg")
-
-    entry("attentionButtonFg",       p["rainbow-red"])
-    entry("attentionButtonFgOver",   "attentionButtonFg")
-    entry("attentionButtonBgOver",   p["level0"])
-    entry("attentionButtonBgRipple", p["level1"])
-
-    entry("outlineButtonBg",        "windowBg")
-    entry("outlineButtonBgOver",    p["level0"])
-    entry("outlineButtonOutlineFg", p["emphasis"])
-    entry("outlineButtonBgRipple",  p["level1"])
-
-    # Popup menu
-    entry("menuBg",             "windowBg")
-    entry("menuBgOver",         "windowBgOver")
-    entry("menuBgRipple",       "windowBgRipple")
-    entry("menuIconFg",         p["level3"])
-    entry("menuIconFgOver",     p["level4"])
-    entry("menuSubmenuArrowFg", p["level5"])
-    entry("menuFgDisabled",     p["level2"])
-    entry("menuSeparatorFg",    p["level1"])
-
-    # Scrollbars
-    entry("scrollBarBg",     p["level3"] + "80")
-    entry("scrollBarBgOver", p["level4"] + "80")
-    entry("scrollBg",        p["level1"] + "80")
-    entry("scrollBgOver",    p["level2"] + "80")
-
-    entry("smallCloseIconFg",     p["level3"])
-    entry("smallCloseIconFgOver", p["level4"])
-
-    entry("radialFg", "windowFgActive")
-    entry("radialBg", "#00000056")
-
-    # Inputs
-    entry("placeholderFg",         "windowSubTextFg")
-    entry("placeholderFgActive",   p["level3"])
-    entry("inputBorderFg",         p["level1"])
-    entry("filterInputBorderFg",   p["emphasis"])
-    entry("filterInputActiveBg",   "windowBg")
-    entry("filterInputInactiveBg", "windowBgOver")
-
-    entry("checkboxFg",       p["level3"])
-    entry("botKbBg",          "menuBgOver")
-    entry("botKbDownBg",      "menuBgRipple")
-    entry("botKbColor",       "windowBoldFgOver")
-    entry("sliderBgInactive", p["level2"])
-    entry("sliderBgActive",   "windowBgActive")
-
-    # Tooltip
-    entry("tooltipBg",       p["level0"])
-    entry("tooltipFg",       p["fg"])
-    entry("tooltipBorderFg", p["level1"])
-
-    # Window title (Windows only, but declare anyway)
-    entry("titleShadow",                  "#00000010")
-    entry("titleBg",                      "windowBgOver")
-    entry("titleBgActive",                "titleBg")
-    entry("titleButtonBg",                "titleBg")
-    entry("titleButtonFg",                p["level3"])
-    entry("titleButtonBgOver",            p["level1"])
-    entry("titleButtonFgOver",            p["level4"])
-    entry("titleButtonBgActive",          "titleButtonBg")
-    entry("titleButtonFgActive",          "titleButtonFg")
-    entry("titleButtonBgActiveOver",      "titleButtonBgOver")
-    entry("titleButtonFgActiveOver",      "titleButtonFgOver")
-    entry("titleButtonCloseBg",           "titleButtonBg")
-    entry("titleButtonCloseFg",           "titleButtonFg")
-    entry("titleButtonCloseBgOver",       p["rainbow-red"])
-    entry("titleButtonCloseFgOver",       active_fg)
-    entry("titleButtonCloseBgActive",     "titleButtonCloseBg")
-    entry("titleButtonCloseFgActive",     "titleButtonCloseFg")
-    entry("titleButtonCloseBgActiveOver", "titleButtonCloseBgOver")
-    entry("titleButtonCloseFgActiveOver", "titleButtonCloseFgOver")
-    entry("titleFgActive",                p["level5"])
-    entry("titleFg",                      p["level4"])
-
-    entry("trackFg",       p["level2"])
-    entry("trackFgActive", p["emphasis"])
-    entry("trackFgOver",   p["level3"])
-
-    # Dialog list (left panel)
-    entry("dialogsMenuIconFg",     p["level3"])
-    entry("dialogsMenuIconFgOver", p["level4"])
-    entry("dialogsBg",             "windowBg")
-    entry("dialogsNameFg",         p["level6"])
-    entry("dialogsChatIconFg",     p["level3"])
-    entry("dialogsDateFg",         p["level3"])
-    entry("dialogsTextFg",         p["level4"])
-    entry("dialogsTextFgService",  "windowActiveTextFg")
-    entry("dialogsDraftFg",        p["rainbow-red"])
-    entry("dialogsVerifiedIconBg", "windowBgActive")
-    entry("dialogsVerifiedIconFg", "windowFgActive")
-    entry("dialogsSendingIconFg",  p["level3"])
-    entry("dialogsSentIconFg",     p["emphasis"])
-    entry("dialogsUnreadBg",       p["emphasis"])
-    entry("dialogsUnreadBgMuted",  p["level3"])
-    entry("dialogsUnreadFg",       active_fg)
-
-    entry("dialogsBgOver",             p["level0"])
-    entry("dialogsNameFgOver",         "dialogsNameFg")
-    entry("dialogsChatIconFgOver",     "dialogsChatIconFg")
-    entry("dialogsDateFgOver",         "dialogsDateFg")
-    entry("dialogsTextFgOver",         "dialogsTextFg")
-    entry("dialogsTextFgServiceOver",  "dialogsTextFgService")
-    entry("dialogsDraftFgOver",        "dialogsDraftFg")
-    entry("dialogsVerifiedIconBgOver", "dialogsVerifiedIconBg")
-    entry("dialogsVerifiedIconFgOver", "dialogsVerifiedIconFg")
-    entry("dialogsSendingIconFgOver",  "dialogsSendingIconFg")
-    entry("dialogsSentIconFgOver",     "dialogsSentIconFg")
-    entry("dialogsUnreadBgOver",       "dialogsUnreadBg")
-    entry("dialogsUnreadBgMutedOver",  "dialogsUnreadBgMuted")
-    entry("dialogsUnreadFgOver",       "dialogsUnreadFg")
-
-    entry("dialogsBgActive",             sel_bg)
-    entry("dialogsNameFgActive",         sel_fg)
-    entry("dialogsChatIconFgActive",     sel_fg if not is_dark else p["level5"])
-    entry("dialogsDateFgActive",         sel_secondary)
-    entry("dialogsTextFgActive",         sel_secondary)
-    entry("dialogsTextFgServiceActive",  sel_accent)
-    entry("dialogsDraftFgActive",        p["rainbow-red"] if is_dark else active_fg)
-    entry("dialogsVerifiedIconBgActive", sel_accent)
-    entry("dialogsVerifiedIconFgActive", sel_bg if is_dark else p["emphasis"])
-    entry("dialogsSendingIconFgActive",  sel_secondary)
-    entry("dialogsSentIconFgActive",     sel_accent)
-    entry("dialogsUnreadBgActive",       p["emphasis"] if is_dark else active_fg)
-    entry("dialogsUnreadBgMutedActive",  p["level3"] if is_dark else p["level2"])
-    entry("dialogsUnreadFgActive",       active_fg if is_dark else p["emphasis"])
-
-    entry("dialogsRippleBg",       p["level1"])
-    entry("dialogsRippleBgActive", p["level3"] if is_dark else p["accent-match"])
-    entry("dialogsForwardBg",      "dialogsBgActive")
-    entry("dialogsForwardFg",      "dialogsNameFgActive")
-
-    entry("searchedBarBg",     p["level0"])
-    entry("searchedBarBorder", p["level1"])
-    entry("searchedBarFg",     p["level4"])
-
-    # History / chat area
-    entry("historyTextInFg",          p["fg"])
-    entry("historyTextInFgSelected",  p["fg"])
-    entry("historyTextOutFg",         p["fg"])
-    entry("historyTextOutFgSelected", p["fg"])
-    entry("historyCaretFg",           p["fg"])
-    entry("historyLinkInFg",          p["link"])
-    entry("historyLinkInFgSelected",  p["link"])
-    entry("historyLinkOutFg",         p["link"])
-    entry("historyLinkOutFgSelected", p["link"])
-    entry("historyFileNameInFg",      p["fg"])
-    entry("historyFileNameOutFg",     p["fg"])
-    entry("historyOutIconFg",         p["emphasis"])
-    entry("historyOutIconFgSelected", p["emphasis"])
-    entry("historyIconFgInverted",    p["level6"] if is_dark else "windowBg")
-    entry("historyCallArrowInFg",     p["rainbow-green"])
-    entry("historyCallArrowMissedInFg", p["rainbow-red"])
-    entry("historyCallArrowOutFg",    p["rainbow-green"])
-    entry("historyUnreadBarBg",       p["level0"])
-    entry("historyUnreadBarBorder",   p["level1"])
-    entry("historyUnreadBarFg",       p["level4"])
-
-    # Peer colors (8 rotating, used for avatars and names)
-    entry("historyPeer1NameFg",    p["rainbow-red"])
-    entry("historyPeer1UserpicBg", p["rainbow-red"])
-    entry("historyPeer2NameFg",    p["rainbow-green"])
-    entry("historyPeer2UserpicBg", p["rainbow-green"])
-    entry("historyPeer3NameFg",    p["rainbow-yellow"])
-    entry("historyPeer3UserpicBg", p["rainbow-yellow"])
-    entry("historyPeer4NameFg",    p["rainbow-blue"])
-    entry("historyPeer4UserpicBg", p["rainbow-blue"])
-    entry("historyPeer5NameFg",    p["rainbow-orange"])
-    entry("historyPeer5UserpicBg", p["rainbow-orange"])
-    entry("historyPeer6NameFg",    p["rainbow-cyan"])
-    entry("historyPeer6UserpicBg", p["rainbow-cyan"])
-    entry("historyPeer7NameFg",    p["rainbow-magenta"])
-    entry("historyPeer7UserpicBg", p["rainbow-magenta"])
-    entry("historyPeer8NameFg",    p["rainbow-bluelight"])
-    entry("historyPeer8UserpicBg", p["rainbow-bluelight"])
-    entry("historyPeerArchiveUserpicBg", p["level3"])
-    entry("historyPeerSavedMessagesBg",  p["emphasis"])
-    entry("historyPeerUserpicFg",        p["level6"] if is_dark else active_fg)
-
-    # Message bubbles
-    entry("msgInBg",                 p["level0"])
-    entry("msgInBgSelected",         p["level1"] if is_dark else p["accent-subtle"])
-    entry("msgOutBg",                msg_out_bg)
-    entry("msgOutBgSelected",        msg_out_bg_sel)
-    entry("msgSelectOverlay",        p["emphasis"] + "40")
-    entry("msgStickerOverlay",       p["emphasis"] + "40")
-    entry("msgInServiceFg",          p["emphasis"])
-    entry("msgInServiceFgSelected",  p["emphasis"])
-    entry("msgOutServiceFg",         p["emphasis"])
-    entry("msgOutServiceFgSelected", p["emphasis"])
-    entry("msgInShadow",             p["level1"])
-    entry("msgInShadowSelected",     p["level1"])
-    entry("msgOutShadow",            p["level1"])
-    entry("msgOutShadowSelected",    p["level1"])
-    entry("msgInDateFg",             p["level4"])
-    entry("msgInDateFgSelected",     p["level5"])
-    entry("msgOutDateFg",            p["level4"])
-    entry("msgOutDateFgSelected",    p["level5"])
-    entry("msgServiceFg",            p["fg"] if is_dark else p["level6"])
-    entry("msgServiceBg",            p["level0"])
-    entry("msgServiceBgSelected",    p["level1"])
-    entry("msgInReplyBarColor",      p["emphasis"])
-    entry("msgInReplyBarSelColor",   p["emphasis"])
-    entry("msgOutReplyBarColor",     p["emphasis"])
-    entry("msgOutReplyBarSelColor",  p["emphasis"])
-    entry("msgImgReplyBarColor",     p["level6"] if is_dark else active_fg)
-    entry("msgInMonoFg",             p["rainbow-green"])
-    entry("msgOutMonoFg",            p["rainbow-green"])
-    entry("msgDateImgFg",            p["level6"] if is_dark else active_fg)
-    entry("msgDateImgBg",            "#00000080" if is_dark else p["level6"] + "80")
-    entry("msgDateImgBgOver",        "#000000a0" if is_dark else p["level6"] + "a0")
-    entry("msgDateImgBgSelected",    "#000000a0" if is_dark else p["level6"] + "a0")
-    entry("msgFileThumbLinkInFg",    p["link"])
-    entry("msgFileThumbLinkOutFg",   p["link"])
-    entry("msgFileInBg",             p["emphasis"])
-    entry("msgFileInBgOver",         p["accent-bright"])
-    entry("msgFileInBgSelected",     p["accent-match"])
-    entry("msgFileOutBg",            p["emphasis"])
-    entry("msgFileOutBgOver",        p["accent-bright"])
-    entry("msgFileOutBgSelected",    p["accent-match"])
-    entry("msgFile1Bg",              p["rainbow-blue"])
-    entry("msgFile1BgDark",          p["rainbow-blue"])
-    entry("msgFile1BgOver",          p["rainbow-blue"])
-    entry("msgFile1BgSelected",      p["rainbow-blue"])
-    entry("msgFile2Bg",              p["rainbow-green"])
-    entry("msgFile2BgDark",          p["rainbow-green"])
-    entry("msgFile2BgOver",          p["rainbow-green"])
-    entry("msgFile2BgSelected",      p["rainbow-green"])
-    entry("msgFile3Bg",              p["rainbow-red"])
-    entry("msgFile3BgDark",          p["rainbow-red"])
-    entry("msgFile3BgOver",          p["rainbow-red"])
-    entry("msgFile3BgSelected",      p["rainbow-red"])
-    entry("msgFile4Bg",              p["rainbow-yellow"])
-    entry("msgFile4BgDark",          p["rainbow-yellow"])
-    entry("msgFile4BgOver",          p["rainbow-yellow"])
-    entry("msgFile4BgSelected",      p["rainbow-yellow"])
-    entry("msgWaveformInActive",     p["emphasis"])
-    entry("msgWaveformInInactive",   p["level2"])
-    entry("msgWaveformOutActive",    p["emphasis"])
-    entry("msgWaveformOutInactive",  p["level2"])
-    entry("msgBotKbOverBgAdd",       p["level6"] + "20")
-    entry("msgBotKbIconFg",          p["level6"])
-    entry("msgBotKbRippleBg",        p["level6"] + "10")
-    entry("msgBotKbButtonBg",        p["level0"])
-
-    # Compose area
-    entry("historyComposeAreaBg",         "windowBg")
-    entry("historyComposeAreaFg",         p["fg"])
-    entry("historyComposeAreaFgService",  p["level4"])
-    entry("historyComposeIconFg",         p["level3"])
-    entry("historyComposeIconFgOver",     p["level4"])
-    entry("historySendIconFg",            p["emphasis"])
-    entry("historySendIconFgOver",        p["accent-bright"])
-    entry("historyPinnedBg",              "windowBg")
-    entry("historyReplyBg",               "windowBg")
-    entry("historyReplyIconFg",           p["emphasis"])
-    entry("historyReplyCancelFg",         p["level3"])
-    entry("historyReplyCancelFgOver",     p["level4"])
-    entry("historyComposeButtonBg",       "windowBg")
-    entry("historyComposeButtonBgOver",   p["level0"])
-    entry("historyComposeButtonBgRipple", p["level1"])
-
-    # Overview (media gallery checkmarks)
-    entry("overviewCheckBg",       p["bg"] + "60")
-    entry("overviewCheckFg",       p["level6"] if is_dark else active_fg)
-    entry("overviewCheckFgActive", p["level6"] if is_dark else active_fg)
-    entry("overviewCheckedBg",     p["emphasis"])
-    entry("overviewCheckedFg",     p["level6"] if is_dark else active_fg)
-
-    # Sidebar (folders)
-    entry("sideBarBg",           p["level0"])
-    entry("sideBarBgActive",     sel_bg)
-    entry("sideBarBgRipple",     p["level1"])
-    entry("sideBarTextFg",       p["level4"])
-    entry("sideBarTextFgActive", sel_accent)
-    entry("sideBarIconFg",       p["level3"])
-    entry("sideBarIconFgActive", sel_accent)
-    entry("sideBarBadgeBg",      p["emphasis"])
-    entry("sideBarBadgeBgMuted", p["level3"])
-    entry("sideBarBadgeFg",      active_fg)
-
-    # Intro (login screen)
-    entry("introBg",              "windowBg")
-    entry("introTitleFg",         p["level6"])
-    entry("introDescriptionFg",   p["level4"])
-    entry("introErrorFg",         p["rainbow-red"])
-    entry("introCoverTopBg",      p["emphasis"])
-    entry("introCoverBottomBg",   p["level0"])
-    entry("introCoverIconsFg",    p["level1"])
-    entry("introCoverPlaneTrace", p["level0"])
-    entry("introCoverPlaneInner", p["emphasis"])
-    entry("introCoverPlaneOuter", p["accent-match"])
-    entry("introCoverPlaneIcon",  p["level6"])
-
-    # Box (modal dialogs)
-    entry("boxBg",                     "windowBg")
-    entry("boxTextFg",                 p["fg"])
-    entry("boxTextFgGood",             p["rainbow-green"])
-    entry("boxTextFgError",            p["rainbow-red"])
-    entry("boxTitleFg",                p["level6"])
-    entry("boxSearchBg",               "windowBg")
-    entry("boxSearchCancelIconFg",     p["level3"])
-    entry("boxSearchCancelIconFgOver", p["level4"])
-    entry("boxTitleAdditionalFg",      p["level3"])
-    entry("boxTitleCloseFg",           p["level3"])
-    entry("boxTitleCloseFgOver",       p["level4"])
-    entry("boxPhotoBg",                p["bg"])
-    entry("boxPhotoTextFg",            p["level6"] if is_dark else active_fg)
-    entry("boxPhotoCaptionFg",         p["level4"])
-    entry("boxDividerBg",              p["level0"])
-    entry("boxDividerFg",              p["level4"])
-
-    # Mentions popup
-    entry("mentionBg",           p["level0"])
-    entry("mentionBgOver",       p["level1"])
-    entry("mentionFg",           p["fg"])
-    entry("mentionFgOver",       p["fg"])
-    entry("mentionFgActive",     p["emphasis"])
-    entry("mentionFgOverActive", p["emphasis"])
-
-    # Calls
-    entry("callArrowFg",            p["rainbow-green"])
-    entry("callArrowMissedFg",      p["rainbow-red"])
-    entry("callIconFg",             p["level6"] if is_dark else active_fg)
-    entry("callBg",                 p["level6"])
-    entry("callNameFg",             p["level6"] if is_dark else active_fg)
-    entry("callFingerprintBg",      p["bg"] + "14")
-    entry("callMuteRipple",         p["bg"] + "14")
-    entry("callAnswerBg",           p["rainbow-green"])
-    entry("callAnswerRipple",       p["rainbow-green"])
-    entry("callAnswerBgOuter",      p["rainbow-green"] + "50")
-    entry("callHangupBg",           p["rainbow-red"])
-    entry("callHangupRipple",       p["rainbow-red"])
-    entry("callCancelBg",           p["level5"] if is_dark else active_fg)
-    entry("callCancelFg",           p["fg"])
-    entry("callCancelRipple",       p["level1"])
-    entry("callMuteBg",             p["level3"])
-    entry("callMuteBgActive",       p["level2"])
-    entry("callMuteFg",             p["level6"])
-    entry("callMuteFgActive",       p["level5"])
-    entry("callMuteRippleBgActive", p["level2"])
-
-    # Media player
-    entry("mediaPlayerBg",         "windowBg")
-    entry("mediaPlayerActiveFg",   p["emphasis"])
-    entry("mediaPlayerInactiveFg", p["level2"])
-    entry("mediaPlayerDisabledFg", p["level1"])
-
-    # Import progress
-    entry("importHistoryImportBg", "windowBg")
-    entry("importIconFg",          p["level6"] if is_dark else active_fg)
-
-    return "\n".join(lines) + "\n"
+    return {
+        "$schema": PI_THEME_SCHEMA,
+        "name": name,
+        "vars": vars_,
+        "colors": colors,
+        "export": {
+            "pageBg": "bg",
+            "cardBg": "level0",
+            "infoBg": "export-info-bg",
+        },
+    }
 
 
-def generate_telegram(light_p, dark_p, output_dir):
-    out = os.path.join(output_dir, "telegram")
+def generate_pi(light_p, dark_p, output_dir):
+    out = os.path.join(output_dir, "pi", "themes")
     os.makedirs(out, exist_ok=True)
 
-    light_palette = _telegram_palette(light_p, "light")
-    with open(os.path.join(out, "nibelung.tdesktop-palette"), "w") as f:
-        f.write(light_palette)
+    _write_json(os.path.join(out, "nibelung.json"),
+                _pi_theme(light_p, "nibelung", "light"))
+    _write_json(os.path.join(out, "nibelung-dark.json"),
+                _pi_theme(dark_p, "nibelung-dark", "dark"))
 
-    dark_palette = _telegram_palette(dark_p, "dark")
-    with open(os.path.join(out, "nibelung-dark.tdesktop-palette"), "w") as f:
-        f.write(dark_palette)
-
-    print(f"Telegram: wrote {out}")
-
+    print(f"Pi: wrote {os.path.dirname(out)}")
 
 # ---------------------------------------------------------------------------
-# Smoke tests
+# OMP backend
 # ---------------------------------------------------------------------------
 
-def run_smoke_tests(dist):
-    # VSCode light
-    with open(f"{dist}/vscode/themes/nibelung-color-theme.json") as f:
-        vscode_light = json.load(f)
-    assert vscode_light["colors"]["editor.background"] == "#F8F9FA", \
-        f"VSCode light bg: {vscode_light['colors']['editor.background']!r}"
-    assert vscode_light["colors"]["statusBar.background"] == "#495057", \
-        f"VSCode light statusBar: {vscode_light['colors']['statusBar.background']!r}"
-    kw_scope = next(t for t in vscode_light["tokenColors"]
-                    if "keyword" in str(t.get("scope", "")))
-    assert kw_scope["settings"]["foreground"].upper() == "#6C757D", \
-        f"VSCode light keyword fg: {kw_scope['settings']['foreground']!r}"
-
-    # VSCode dark
-    with open(f"{dist}/vscode/themes/nibelung-dark-color-theme.json") as f:
-        vscode_dark = json.load(f)
-    assert vscode_dark["colors"]["editor.background"] == "#212529", \
-        f"VSCode dark bg: {vscode_dark['colors']['editor.background']!r}"
-
-    # Alacritty light
-    with open(f"{dist}/alacritty/nibelung.toml") as f:
-        content = f.read()
-        assert "#F8F9FA" in content, "Alacritty light: missing bg #F8F9FA"
-        assert "#495057" in content, "Alacritty light: missing fg #495057"
-
-    # IntelliJ light
-    tree = ET.parse(f"{dist}/intellij/Nibelung.icls")
-    scheme = tree.getroot()
-    assert scheme.get("name") == "Nibelung", \
-        f"IntelliJ name: {scheme.get('name')!r}"
-    assert scheme.get("parent_scheme") == "Default", \
-        f"IntelliJ parent_scheme: {scheme.get('parent_scheme')!r}"
-
-    # Neovim light
-    with open(f"{dist}/neovim/colors/nibelung.lua") as f:
-        lua = f.read()
-        assert 'vim.g.colors_name = "nibelung"' in lua, \
-            "Neovim: missing colors_name assignment"
-        assert "#F8F9FA" in lua, "Neovim light: missing bg #F8F9FA"
-
-    # Caelestia light
-    with open(f"{dist}/caelestia/nibelung-scheme.json") as f:
-        caelestia = json.load(f)
-    assert caelestia["name"] == "nibelung", \
-        f"Caelestia name: {caelestia['name']!r}"
-    assert caelestia["mode"] == "light", \
-        f"Caelestia mode: {caelestia['mode']!r}"
-    assert caelestia["colours"]["background"] == "f8f9fa", \
-        f"Caelestia light bg: {caelestia['colours']['background']!r}"
-    assert caelestia["colours"]["primary"] == "9bb1ff", \
-        f"Caelestia light primary: {caelestia['colours']['primary']!r}"
-
-    # Caelestia dark
-    with open(f"{dist}/caelestia/nibelung-dark-scheme.json") as f:
-        caelestia_dark = json.load(f)
-    assert caelestia_dark["mode"] == "dark", \
-        f"Caelestia dark mode: {caelestia_dark['mode']!r}"
-    assert caelestia_dark["colours"]["background"] == "212529", \
-        f"Caelestia dark bg: {caelestia_dark['colours']['background']!r}"
-    assert caelestia_dark["colours"]["shadow"] == "000000", \
-        f"Caelestia dark shadow: {caelestia_dark['colours']['shadow']!r}"
-
-    # OpenCode
-    with open(f"{dist}/opencode/nibelung.json") as f:
-        opencode = json.load(f)
-    assert opencode["$schema"] == "https://opencode.ai/theme.json", \
-        f"OpenCode schema: {opencode['$schema']!r}"
-    assert opencode["defs"]["l-bg"] == "#F8F9FA", \
-        f"OpenCode defs l-bg: {opencode['defs']['l-bg']!r}"
-    assert opencode["defs"]["d-bg"] == "#212529", \
-        f"OpenCode defs d-bg: {opencode['defs']['d-bg']!r}"
-    assert opencode["theme"]["primary"]["dark"] == "d-accent-match", \
-        f"OpenCode primary dark: {opencode['theme']['primary']['dark']!r}"
-    assert opencode["theme"]["syntaxKeyword"]["light"] == "l-accent-match", \
-        f"OpenCode syntaxKeyword light: {opencode['theme']['syntaxKeyword']['light']!r}"
-
-    # Telegram light
-    with open(f"{dist}/telegram/nibelung.tdesktop-palette") as f:
-        tg_light = f.read()
-    assert "windowBg: #F8F9FA;" in tg_light, \
-        f"Telegram light windowBg missing or wrong"
-    assert "windowFg: #495057;" in tg_light, \
-        f"Telegram light windowFg missing or wrong"
-    assert "windowBgActive: #9BB1FF;" in tg_light, \
-        f"Telegram light accent missing"
-
-    # Telegram dark
-    with open(f"{dist}/telegram/nibelung-dark.tdesktop-palette") as f:
-        tg_dark = f.read()
-    assert "windowBg: #212529;" in tg_dark, \
-        f"Telegram dark windowBg missing or wrong"
-    assert "windowFg: #CED4DA;" in tg_dark, \
-        f"Telegram dark windowFg missing or wrong"
-
-    print("Smoke tests passed")
+OMP_THEME_SCHEMA = "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/modes/theme/theme-schema.json"
 
 
-# ---------------------------------------------------------------------------
+def _omp_theme(p, name, variant):
+    is_dark = (variant == "dark")
+
+    vars_ = dict(sorted(p.items()))
+    vars_.update({
+        "custom-message-bg": _blend(p["level0"], p["rainbow-magenta"], 0.12),
+        "tool-success-bg": _blend(p["bg"], p["rainbow-green"], 0.14 if is_dark else 0.16),
+        "tool-error-bg": _blend(p["bg"], p["rainbow-red"], 0.14 if is_dark else 0.16),
+        "export-info-bg": _blend(p["level0"], p["accent-subtle"], 0.35),
+    })
+
+    # OMP extends Pi's 51 tokens (see _agent_colors) with python mode
+    # and a 14-token status line. Override two agent-colors defaults
+    # (bashMode, customMessageLabel) from rainbow to accent blue so the
+    # OMP variant stays within Nibelung's grayscale+blue palette.
+    # Rainbow is reserved for semantic states: git status, diffs, errors.
+    colors = _agent_colors()
+    colors.update({
+        "bashMode": "accent-bright",
+        "customMessageLabel": "accent-bright",
+
+        # Modes
+        "pythonMode": "accent-bright",
+
+        # Status line — informational segments ride the grayscale ramp;
+        # only git states carry semantic rainbow.
+        "statusLineBg":        "level1",
+        "statusLineSep":       "level2",
+        "statusLineModel":     "level5",
+        "statusLinePath":      "accent-bright",
+        "statusLineGitClean":  "rainbow-green",
+        "statusLineGitDirty":  "rainbow-orange",
+        "statusLineContext":   "level5",
+        "statusLineSpend":     "level5",
+        "statusLineStaged":    "rainbow-green",
+        "statusLineDirty":     "rainbow-orange",
+        "statusLineUntracked": "rainbow-red",
+        "statusLineOutput":    "level5",
+        "statusLineCost":      "level4",
+        "statusLineSubagents": "emphasis",
+    })
+
+    return {
+        "$schema": OMP_THEME_SCHEMA,
+        "name": name,
+        "vars": vars_,
+        "colors": colors,
+        "export": {
+            "pageBg": "bg",
+            "cardBg": "level0",
+            "infoBg": "export-info-bg",
+        },
+    }
+
+
+def generate_omp(light_p, dark_p, output_dir):
+    out = os.path.join(output_dir, "omp", "themes")
+    os.makedirs(out, exist_ok=True)
+
+    _write_json(os.path.join(out, "nibelung.json"),
+                _omp_theme(light_p, "nibelung", "light"))
+    _write_json(os.path.join(out, "nibelung-dark.json"),
+                _omp_theme(dark_p, "nibelung-dark", "dark"))
+
+    print(f"OMP: wrote {os.path.dirname(out)}")
+
+
 # Helpers
 # ---------------------------------------------------------------------------
 
@@ -1433,21 +1089,15 @@ def _write_json(path, data):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate nibelung themes for VSCode, Neovim, IntelliJ, Alacritty, Caelestia, and OpenCode")
+        description="Generate nibelung themes for VSCode, Neovim, IntelliJ, Alacritty, Caelestia, OpenCode, Pi, and OMP")
     parser.add_argument("--emacs",      default="emacs",
                         help="Path to Emacs binary (default: emacs)")
     parser.add_argument("--output-dir", default="dist",
                         help="Output directory (default: dist)")
     parser.add_argument("--target",     default="all",
-                        choices=["vscode", "neovim", "intellij", "alacritty", "caelestia", "opencode", "telegram", "all"],
+                        choices=["vscode", "neovim", "intellij", "alacritty", "caelestia", "opencode", "pi", "omp", "all"],
                         help="Which backend to generate (default: all)")
-    parser.add_argument("--smoke-test", metavar="DIST_DIR",
-                        help="Run smoke tests against generated files in DIST_DIR")
     args = parser.parse_args()
-
-    if args.smoke_test:
-        run_smoke_tests(args.smoke_test)
-        return
 
     light_p, dark_p = extract_palettes(args.emacs)
 
@@ -1458,7 +1108,8 @@ def main():
         "alacritty":  generate_alacritty,
         "caelestia":  generate_caelestia,
         "opencode":   generate_opencode,
-        "telegram":   generate_telegram,
+        "pi":         generate_pi,
+        "omp":         generate_omp,
     }
 
     targets = list(generators.keys()) if args.target == "all" else [args.target]
