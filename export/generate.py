@@ -1370,6 +1370,8 @@ def main():
         description="Generate nibelung themes for VSCode, Zed, Neovim, IntelliJ, Alacritty, Caelestia, OpenCode, Pi, and OMP")
     parser.add_argument("--emacs",      default="emacs",
                         help="Path to Emacs binary (default: emacs)")
+    parser.add_argument("--palettes-json", default=None,
+                        help="Read palettes from a JSON file instead of invoking Emacs")
     parser.add_argument("--output-dir", default="dist",
                         help="Output directory (default: dist)")
     parser.add_argument("--target",     default="all",
@@ -1377,7 +1379,12 @@ def main():
                         help="Which backend to generate (default: all)")
     args = parser.parse_args()
 
-    light_p, dark_p = extract_palettes(args.emacs)
+    if args.palettes_json:
+        with open(args.palettes_json, encoding="utf-8") as f:
+            palettes = json.load(f)
+        light_p, dark_p = palettes["light"], palettes["dark"]
+    else:
+        light_p, dark_p = extract_palettes(args.emacs)
 
     generators = {
         "vscode":     generate_vscode,
