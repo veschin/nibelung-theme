@@ -70,6 +70,7 @@ test-export: export
 	@python3 -m json.tool dist/vscode/themes/nibelung-color-theme.json > /dev/null
 	@python3 -m json.tool dist/vscode/themes/nibelung-dark-color-theme.json > /dev/null
 	@python3 -m json.tool dist/vscode/package.json > /dev/null
+	@python3 -m json.tool dist/zed/themes/nibelung.json > /dev/null
 	@python3 -c "import xml.etree.ElementTree as ET; ET.parse('dist/intellij/Nibelung.icls')"
 	@python3 -c "import xml.etree.ElementTree as ET; ET.parse('dist/intellij/Nibelung_Dark.icls')"
 	@luac -p dist/neovim/colors/nibelung.lua 2>/dev/null || echo "  WARN: luac not found, skipping Lua validation"
@@ -82,9 +83,9 @@ test-export: export
 	@python3 -m json.tool dist/omp/themes/nibelung-dark.json > /dev/null
 	@echo "All export validations passed"
 
-.PHONY: install install-alacritty install-caelestia
+.PHONY: install install-alacritty install-caelestia install-zed
 
-install: install-alacritty install-caelestia
+install: install-alacritty install-caelestia install-zed
 
 install-alacritty: export
 	@echo "=== Installing Alacritty themes ==="
@@ -101,3 +102,9 @@ install-caelestia: export
 	echo "Caelestia: installed to $$DEST/nibelung/"
 
 
+
+install-zed: export
+	@echo "=== Installing Zed theme ==="
+	mkdir -p ~/.config/zed/themes
+	cp dist/zed/themes/nibelung.json ~/.config/zed/themes/nibelung.json
+	@echo "Zed: installed to ~/.config/zed/themes/"
