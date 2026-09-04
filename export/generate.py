@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Nibelung theme generator -- exports palettes from Emacs and generates themes
-for VSCode, Neovim, IntelliJ IDEA, Alacritty, Caelestia/Quickshell, OpenCode,
-Pi, and OMP."""
+for VSCode, Zed, Neovim, IntelliJ IDEA, Alacritty, Caelestia/Quickshell,
+OpenCode, Pi, and OMP."""
 
 import argparse
 import json
@@ -1076,6 +1076,284 @@ def generate_omp(light_p, dark_p, output_dir):
 
 # Helpers
 # ---------------------------------------------------------------------------
+# Zed backend
+# ---------------------------------------------------------------------------
+
+ZED_SCHEMA = "https://zed.dev/schema/themes/v0.2.0.json"
+
+
+def _zed_hl(color, bg=None, weight=None, style=None):
+    entry = {"color": color, "font_style": style, "font_weight": weight}
+    if bg is not None:
+        entry["background_color"] = bg
+    return entry
+
+
+def _zed_syntax(p, r):
+    """Zed syntax tokens -> Nibelung semantic roles.
+
+    Unlike VSCode, Zed highlight styles accept ``background_color``, so the
+    Emacs theme's signature comment background survives the port.
+    """
+    cbg = p["comment-bg"]
+    syntax = {}
+
+    def add(tokens, color, bg=None, weight=None, style=None):
+        for token in tokens:
+            syntax[token] = _zed_hl(color, bg, weight, style)
+
+    # Comments — the only tokens with their own background
+    add(["comment"], r["comment"], bg=cbg)
+    add(["comment.doc", "comment.documentation", "predoc"], r["optional"], bg=cbg)
+    add(["comment.hint", "comment.note"], p["emphasis"], bg=cbg)
+    add(["comment.todo"], p["rainbow-yellow"], bg=cbg, weight=700)
+    add(["comment.warning"], p["rainbow-orange"], bg=cbg)
+    add(["comment.error"], p["rainbow-red"], bg=cbg)
+
+    # Keywords and operators
+    add(["keyword", "keyword.conditional", "keyword.conditional.ternary",
+         "keyword.coroutine", "keyword.debug", "keyword.exception",
+         "keyword.export", "keyword.function", "keyword.import",
+         "keyword.operator", "keyword.repeat", "keyword.return"],
+        r["constant"])
+    add(["keyword.modifier", "keyword.type", "keyword.directive",
+         "keyword.directive.define", "preproc"], r["builtin"])
+    add(["operator"], r["quiet"])
+    add(["punctuation", "punctuation.bracket", "punctuation.delimiter",
+         "punctuation.special"], r["quiet"])
+    add(["punctuation.list_marker"], r["constant"])
+
+    # Literals
+    add(["string", "string.doc", "string.documentation", "character"],
+        r["optional"])
+    add(["string.escape", "character.special"], r["quiet"])
+    add(["string.regex", "string.regexp", "string.special",
+         "string.special.path", "string.special.symbol", "symbol"],
+        r["constant"])
+    add(["string.special.url", "link_uri"], p["link"])
+    add(["number", "number.float", "float", "boolean", "constant",
+         "constant.builtin", "constant.macro"], r["constant"])
+
+    # Functions
+    add(["function", "function.call", "function.builtin", "function.method",
+         "function.method.call", "function.macro"], r["bold"])
+    add(["function.decorator", "attribute"], r["quiet"])
+
+    # Types, variables, modules
+    add(["type", "type.builtin", "type.class.definition", "type.definition",
+         "type.interface", "type.super", "enum", "variant", "constructor",
+         "concept", "parent", "label", "module", "namespace"], r["builtin"])
+    add(["variable", "variable.builtin", "variable.special", "primary",
+         "embedded"], r["builtin"])
+    add(["parameter", "variable.parameter", "property", "variable.member",
+         "field"], r["optional"])
+
+    # Markup
+    add(["title"], r["function"], weight=700)
+    add(["emphasis"], r["bold"], style="italic")
+    add(["emphasis.strong"], r["bold"], weight=700)
+    add(["text.literal"], r["constant"])
+    add(["link_text"], p["link"])
+    add(["tag", "tag.doctype"], r["builtin"])
+    add(["tag.attribute", "tag.delimiter"], r["quiet"])
+
+    # Diffs
+    add(["diff.plus"], p["rainbow-green"])
+    add(["diff.minus"], p["rainbow-red"])
+
+    return dict(sorted(syntax.items()))
+
+
+def _zed_style(p, r, a):
+    def status(color):
+        """A status color plus its tinted background and border."""
+        return color, _blend(p["bg"], color, 0.12), _blend(p["bg"], color, 0.40)
+
+    error, error_bg, error_bd = status(p["level5"])
+    warning, warning_bg, warning_bd = status(p["level4"])
+    info, info_bg, info_bd = status(p["emphasis"])
+    hint, hint_bg, hint_bd = status(p["level3"])
+    created, created_bg, created_bd = status(p["rainbow-green"])
+    modified, modified_bg, modified_bd = status(p["rainbow-yellow"])
+    deleted, deleted_bg, deleted_bd = status(p["rainbow-red"])
+    conflict, conflict_bg, conflict_bd = status(p["rainbow-orange"])
+    renamed, renamed_bg, renamed_bd = status(p["rainbow-blue"])
+    ignored, ignored_bg, ignored_bd = status(p["level3"])
+
+    style = {
+        "accents": [p["emphasis"], p["rainbow-green"], p["rainbow-magenta"],
+                    p["rainbow-orange"], p["rainbow-cyan"], p["rainbow-red"]],
+        "background.appearance": "opaque",
+
+        # Chrome
+        "background":                    p["bg"],
+        "surface.background":            p["level0"],
+        "elevated_surface.background":   p["level0"],
+        "border":                        p["level2"],
+        "border.variant":                p["level1"],
+        "border.focused":                p["emphasis"],
+        "border.selected":               p["emphasis"],
+        "border.transparent":            p["level2"] + "00",
+        "border.disabled":               p["level1"],
+        "element.background":            p["level0"],
+        "element.hover":                 p["level1"],
+        "element.active":                p["level2"],
+        "element.selected":              p["accent-subtle"],
+        "element.disabled":              p["level1"],
+        "drop_target.background":        p["accent-subtle"] + "80",
+        "ghost_element.background":      None,
+        "ghost_element.hover":           p["level0"] + "80",
+        "ghost_element.active":          p["level1"],
+        "ghost_element.selected":        p["accent-subtle"],
+        "ghost_element.disabled":        p["level0"],
+
+        "text":                          p["fg"],
+        "text.muted":                    p["level4"],
+        "text.placeholder":              p["level3"],
+        "text.disabled":                 p["level3"],
+        "text.accent":                   p["emphasis"],
+        "icon":                          p["fg"],
+        "icon.muted":                    p["level4"],
+        "icon.disabled":                 p["level3"],
+        "icon.placeholder":              p["level3"],
+        "icon.accent":                   p["emphasis"],
+
+        "status_bar.background":         p["bg"],
+        "title_bar.background":          p["bg"],
+        "title_bar.inactive_background": p["level0"],
+        "toolbar.background":            p["bg"],
+        "tab_bar.background":            p["level0"],
+        "tab.inactive_background":       p["level0"],
+        "tab.active_background":         p["bg"],
+        "search.match_background":       p["accent-light"] + "66",
+
+        "panel.background":              p["level0"],
+        "panel.focused_border":          p["emphasis"],
+        "panel.indent_guide":            p["level1"],
+        "panel.indent_guide_active":     p["level2"],
+        "panel.indent_guide_hover":      p["level2"],
+        "pane.focused_border":           p["emphasis"],
+        "pane_group.border":             p["level1"],
+
+        "scrollbar.thumb.background":       p["level2"] + "60",
+        "scrollbar.thumb.hover_background": p["level3"] + "60",
+        "scrollbar.thumb.border":           p["level1"],
+        "scrollbar.track.background":       p["bg"] + "00",
+        "scrollbar.track.border":           p["level0"],
+
+        # Editor
+        "editor.foreground":                p["fg"],
+        "editor.background":                p["bg"],
+        "editor.gutter.background":         p["bg"],
+        "editor.subheader.background":      p["level0"],
+        "editor.active_line.background":    p["level0"],
+        "editor.highlighted_line.background": p["level1"],
+        "editor.line_number":               p["level3"],
+        "editor.active_line_number":        p["emphasis"],
+        "editor.invisible":                 p["level2"],
+        "editor.wrap_guide":                p["level1"],
+        "editor.active_wrap_guide":         p["level2"],
+        "editor.indent_guide":              p["level0"],
+        "editor.indent_guide_active":       p["level2"],
+        "editor.document_highlight.read_background":    p["emphasis"] + "20",
+        "editor.document_highlight.write_background":   p["emphasis"] + "30",
+        "editor.document_highlight.bracket_background": p["emphasis"] + "40",
+
+        # Terminal
+        "terminal.background":        p["bg"],
+        "terminal.foreground":        p["fg"],
+        "terminal.ansi.background":   p["bg"],
+        "terminal.bright_foreground": p["level6"],
+        "terminal.dim_foreground":    p["level3"],
+
+        "link_text.hover": p["link"],
+
+        # Status / diagnostics
+        "error": error, "error.background": error_bg, "error.border": error_bd,
+        "warning": warning, "warning.background": warning_bg, "warning.border": warning_bd,
+        "info": info, "info.background": info_bg, "info.border": info_bd,
+        "hint": hint, "hint.background": hint_bg, "hint.border": hint_bd,
+        "success": created, "success.background": created_bg, "success.border": created_bd,
+        "created": created, "created.background": created_bg, "created.border": created_bd,
+        "modified": modified, "modified.background": modified_bg, "modified.border": modified_bd,
+        "deleted": deleted, "deleted.background": deleted_bg, "deleted.border": deleted_bd,
+        "conflict": conflict, "conflict.background": conflict_bg, "conflict.border": conflict_bd,
+        "renamed": renamed, "renamed.background": renamed_bg, "renamed.border": renamed_bd,
+        "ignored": ignored, "ignored.background": ignored_bg, "ignored.border": ignored_bd,
+        "hidden": p["level3"], "hidden.background": p["level0"], "hidden.border": p["level1"],
+        "predictive": p["level3"], "predictive.background": p["level0"], "predictive.border": p["level1"],
+        "unreachable": p["level3"], "unreachable.background": p["level0"], "unreachable.border": p["level1"],
+
+        # Git decorations (newer Zed; falls back to created/modified/deleted)
+        "version_control.added":              created,
+        "version_control.added_background":   created_bg,
+        "version_control.modified":           modified,
+        "version_control.modified_background": modified_bg,
+        "version_control.deleted":            deleted,
+        "version_control.deleted_background": deleted_bg,
+        "version_control.conflict":           conflict,
+        "version_control.conflict_background": conflict_bg,
+        "version_control.renamed":            renamed,
+        "version_control.ignored":            ignored,
+
+        "players": [
+            {"cursor": c, "background": c, "selection": c + "3d"}
+            for c in (p["emphasis"], p["rainbow-green"], p["rainbow-magenta"],
+                      p["rainbow-orange"], p["rainbow-cyan"], p["rainbow-red"],
+                      p["rainbow-bluelight"], p["rainbow-yellow"])
+        ],
+        "syntax": _zed_syntax(p, r),
+    }
+
+    ansi_names = ["black", "red", "green", "yellow", "blue", "magenta",
+                  "cyan", "white"]
+    for name in ansi_names:
+        style[f"terminal.ansi.{name}"] = a[name]
+        style[f"terminal.ansi.bright_{name}"] = a[f"bright_{name}"]
+        # Zed has no dim ANSI slot in the Emacs palette; fade toward the bg.
+        style[f"terminal.ansi.dim_{name}"] = _blend(a[name], p["bg"], 0.35)
+
+    return style
+
+
+def generate_zed(light_p, dark_p, output_dir):
+    out = os.path.join(output_dir, "zed")
+    themes_dir = os.path.join(out, "themes")
+    os.makedirs(themes_dir, exist_ok=True)
+
+    family = {
+        "$schema": ZED_SCHEMA,
+        "name": "Nibelung",
+        "author": "veschin",
+        "themes": [
+            {"name": "Nibelung", "appearance": "light",
+             "style": _zed_style(light_p, roles(light_p), ansi(light_p))},
+            {"name": "Nibelung Dark", "appearance": "dark",
+             "style": _zed_style(dark_p, roles(dark_p), ansi(dark_p))},
+        ],
+    }
+    # sort_keys would scramble the theme list order; keep source order here.
+    with open(os.path.join(themes_dir, "nibelung.json"), "w", encoding="utf-8") as f:
+        f.write(json.dumps(family, indent=2, ensure_ascii=False))
+        f.write("\n")
+
+    manifest = "\n".join([
+        'id = "nibelung"',
+        'name = "Nibelung"',
+        'description = "Minimalist color theme with cool grays and subtle blue accents"',
+        'version = "0.1.0"',
+        'schema_version = 1',
+        'authors = ["veschin"]',
+        'repository = "https://github.com/veschin/nibelung-theme"',
+        "",
+    ])
+    with open(os.path.join(out, "extension.toml"), "w", encoding="utf-8") as f:
+        f.write(manifest)
+
+    print(f"Zed: wrote {out}")
+
+
+# ---------------------------------------------------------------------------
 
 def _write_json(path, data):
     with open(path, "w", encoding="utf-8") as f:
@@ -1089,13 +1367,13 @@ def _write_json(path, data):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate nibelung themes for VSCode, Neovim, IntelliJ, Alacritty, Caelestia, OpenCode, Pi, and OMP")
+        description="Generate nibelung themes for VSCode, Zed, Neovim, IntelliJ, Alacritty, Caelestia, OpenCode, Pi, and OMP")
     parser.add_argument("--emacs",      default="emacs",
                         help="Path to Emacs binary (default: emacs)")
     parser.add_argument("--output-dir", default="dist",
                         help="Output directory (default: dist)")
     parser.add_argument("--target",     default="all",
-                        choices=["vscode", "neovim", "intellij", "alacritty", "caelestia", "opencode", "pi", "omp", "all"],
+                        choices=["vscode", "zed", "neovim", "intellij", "alacritty", "caelestia", "opencode", "pi", "omp", "all"],
                         help="Which backend to generate (default: all)")
     args = parser.parse_args()
 
@@ -1103,6 +1381,7 @@ def main():
 
     generators = {
         "vscode":     generate_vscode,
+        "zed":        generate_zed,
         "neovim":     generate_neovim,
         "intellij":   generate_intellij,
         "alacritty":  generate_alacritty,
