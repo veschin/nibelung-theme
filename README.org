@@ -1,4 +1,6 @@
-[[https://raw.githubusercontent.com/veschin/nibelung-theme/refs/heads/main/nibelung.png]]
+#+begin_html
+<img src="nibelung.webp" alt="Nibelung" width="100%">
+#+end_html
 * Why Nibelung?
 Nibelung Theme is a minimalist Emacs color scheme blending cool gray tones and subtle blue accents, reminiscent of the Nebelung cat's silky fur. Designed for developers who value clarity and focus during long coding sessions.
 #+begin_quote
