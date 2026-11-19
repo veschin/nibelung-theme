@@ -110,18 +110,18 @@ git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
 #+end_src
 Settings -> Editor -> Color Scheme -> select "Nibelung" or "Nibelung Dark"
 ** Alacritty
-#+begin_src sh
-curl -o ~/.config/alacritty/nibelung.toml \
-  https://raw.githubusercontent.com/veschin/nibelung-theme/main/dist/alacritty/nibelung.toml
-curl -o ~/.config/alacritty/nibelung-dark.toml \
-  https://raw.githubusercontent.com/veschin/nibelung-theme/main/dist/alacritty/nibelung-dark.toml
-#+end_src
+From a checkout, run ~make install-alacritty~. Add one theme to the existing
+import list in your Alacritty configuration:
 #+begin_src toml
 # alacritty.toml
 [general]
 import = ["~/.config/alacritty/nibelung.toml"]      # light
-import = ["~/.config/alacritty/nibelung-dark.toml"]  # dark
+# For dark, replace nibelung.toml with nibelung-dark.toml.
 #+end_src
+
+If Caelestia also manages desktop colors, disable its terminal integration
+with ~"enableTerm": false~ in the ~theme~ object of ~caelestia/cli.json~.
+Restart any Alacritty windows that already have runtime palette overrides.
 
 ** Caelestia / Quickshell
 #+begin_src sh
@@ -149,14 +149,8 @@ git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
 #+end_src
 Pi uses the generated semantic theme tokens for TUI chrome, messages, tools, diffs, Markdown, syntax highlighting, thinking-level borders, bash mode, and HTML export.
 ** OMP
-#+begin_quote
-OMP (Oh My Pi) is the Pi successor; themes are drop-in JSON files in ~~/.omp/agent/themes~~.
-#+end_quote
-#+begin_src sh
-git clone https://github.com/veschin/nibelung-theme.git /tmp/nibelung && \
-  mkdir -p ~/.omp/agent/themes && \
-  cp /tmp/nibelung/dist/omp/themes/*.json ~/.omp/agent/themes/
-#+end_src
+From a checkout, run ~make install-omp~. This installs both themes in
+~~/.omp/agent/themes~~ or the agent directory selected by ~PI_CODING_AGENT_DIR~.
 Pick ~nibelung~ (light) or ~nibelung-dark~ under ~Appearance~ in ~/settings~, or set the slots directly:
 #+begin_src sh
 omp config set theme.light nibelung
@@ -168,7 +162,17 @@ theme:
   light: nibelung
   dark: nibelung-dark
 #+end_src
-OMP auto-selects the slot from your terminal background. The theme drives TUI chrome, messages, tool blocks, diffs, Markdown, syntax highlighting, thinking-level borders, bash/python editor modes, the status line, and HTML export.
+omp 19 selects the light or dark slot from the terminal background.
+The installer also adds an extension that asks Alacritty for its background
+after the main Alacritty configuration changes. Run ~/restart~ in an
+existing omp session once to load it and resume that session. If your setup
+uses a different Alacritty configuration path, ~Ctrl+L~ can refresh the
+terminal appearance on demand.
+
+Run ~make test-terminal-themes~ before publishing exports. It requires Python
+3.11 or later with ~jsonschema~, Emacs, and network access to the pinned omp
+schema. It checks both shipped variants against the schema, their expected
+contrast, and a fresh export without overwriting the shipped files.
 ** OpenCode
 #+begin_src sh
 mkdir -p ~/.config/opencode/themes && \

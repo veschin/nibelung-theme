@@ -57,7 +57,7 @@ test-faces:
 clean:
 	@rm -f *.elc
 
-.PHONY: export export-clean test-export
+.PHONY: export export-clean test-export test-terminal-themes
 
 export:
 	python3 export/generate.py --emacs $(EMACS) --output-dir dist
@@ -65,7 +65,10 @@ export:
 export-clean:
 	rm -rf dist/
 
-test-export: export
+test-terminal-themes:
+	python3 export/test_terminal_themes.py "$(EMACS)"
+
+test-export: test-terminal-themes
 	@echo "=== Validating export ==="
 	@python3 -m json.tool dist/vscode/themes/nibelung-color-theme.json > /dev/null
 	@python3 -m json.tool dist/vscode/themes/nibelung-dark-color-theme.json > /dev/null
@@ -73,22 +76,20 @@ test-export: export
 	@python3 -m json.tool dist/zed/themes/nibelung.json > /dev/null
 	@python3 -c "import xml.etree.ElementTree as ET; ET.parse('dist/intellij/Nibelung.icls')"
 	@python3 -c "import xml.etree.ElementTree as ET; ET.parse('dist/intellij/Nibelung_Dark.icls')"
-	@luac -p dist/neovim/colors/nibelung.lua 2>/dev/null || echo "  WARN: luac not found, skipping Lua validation"
-	@python3 -c "import tomllib; tomllib.load(open('dist/alacritty/nibelung.toml','rb'))" 2>/dev/null || echo "  WARN: tomllib needs Python 3.11+, skipping TOML validation"
+	@if command -v luac >/dev/null; then luac -p dist/neovim/colors/nibelung.lua; else echo "  WARN: luac not found, skipping Lua validation"; fi
 	@python3 -m json.tool dist/caelestia/nibelung-scheme.json > /dev/null
 	@python3 -m json.tool dist/caelestia/nibelung-dark-scheme.json > /dev/null
 	@python3 -m json.tool dist/pi/themes/nibelung.json > /dev/null
 	@python3 -m json.tool dist/pi/themes/nibelung-dark.json > /dev/null
-	@python3 -m json.tool dist/omp/themes/nibelung.json > /dev/null
-	@python3 -m json.tool dist/omp/themes/nibelung-dark.json > /dev/null
 	@echo "All export validations passed"
 
-.PHONY: install install-alacritty install-caelestia install-zed
+.PHONY: install install-alacritty install-caelestia install-omp install-zed
 
-install: install-alacritty install-caelestia install-zed
+install: install-alacritty install-caelestia install-omp install-zed
 
 install-alacritty: export
 	@echo "=== Installing Alacritty themes ==="
+	mkdir -p ~/.config/alacritty
 	cp dist/alacritty/nibelung.toml ~/.config/alacritty/nibelung.toml
 	cp dist/alacritty/nibelung-dark.toml ~/.config/alacritty/nibelung-dark.toml
 	@echo "Alacritty: installed to ~/.config/alacritty/"
@@ -101,6 +102,11 @@ install-caelestia: export
 	sudo cp dist/caelestia/default/dark.txt "$$DEST/nibelung/default/dark.txt" && \
 	echo "Caelestia: installed to $$DEST/nibelung/"
 
+
+install-omp: export
+	mkdir -p "$${PI_CODING_AGENT_DIR:-$$HOME/.omp/agent}/themes" "$${PI_CODING_AGENT_DIR:-$$HOME/.omp/agent}/extensions"
+	cp dist/omp/themes/*.json "$${PI_CODING_AGENT_DIR:-$$HOME/.omp/agent}/themes/"
+	cp export/omp-alacritty-appearance.ts "$${PI_CODING_AGENT_DIR:-$$HOME/.omp/agent}/extensions/"
 
 
 install-zed: export

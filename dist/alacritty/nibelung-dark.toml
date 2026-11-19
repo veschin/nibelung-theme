@@ -31,24 +31,24 @@ foreground = "#CED4DA"
 
 [colors.hints.end]
 background = "#2B3035"
-foreground = "#6C757D"
+foreground = "#90979d"
 
 [colors.footer_bar]
 background = "#495057"
 foreground = "#F8F9FA"
 
 [colors.normal]
-black = "#343A40"
-red = "#FFADAD"
-green = "#CAFFBF"
-yellow = "#FDFFB6"
-blue = "#9FA0FF"
-magenta = "#FFC6FF"
-cyan = "#9BF6FF"
+black = "#858c93"
+red = "#d8a2a3"
+green = "#a8d3a1"
+yellow = "#d1d399"
+blue = "#aaace0"
+magenta = "#d2a5d4"
+cyan = "#82ccd4"
 white = "#ADB5BD"
 
 [colors.bright]
-black = "#6C757D"
+black = "#92999f"
 red = "#FFADAD"
 green = "#CAFFBF"
 yellow = "#FDFFB6"
